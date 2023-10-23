@@ -27,7 +27,7 @@ class Core:
         pygame.display.flip()
 
     def draw(self):
-        self.screen.fill(("black"))
+        self.screen.fill("black")
 
     async def run(self):
         while True:
