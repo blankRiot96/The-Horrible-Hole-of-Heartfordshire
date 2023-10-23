@@ -1,0 +1,15 @@
+[project]
+name = "untitled"
+description = "a game for the PGC halloween jam 2023"
+version = "0.1.0"
+dependencies = [
+    "pygame-ce >= 2.3.2"
+]
+requires-python = ">=3.11.0"
+
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
