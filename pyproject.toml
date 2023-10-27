@@ -3,7 +3,8 @@ name = "untitled"
 description = "a game for the PGC halloween jam 2023"
 version = "0.1.0"
 dependencies = [
-    "pygame-ce >= 2.3.2"
+    "pygame-ce >= 2.3.2",
+    "pytmx >= 3.32"
 ]
 requires-python = ">=3.11.0"
 
