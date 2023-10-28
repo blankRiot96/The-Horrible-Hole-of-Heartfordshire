@@ -1,7 +1,6 @@
 import pygame
 
 # Constants
-# Constants
 ROWS = 10
 COLS = 20
 TILE_SIDE = 64
