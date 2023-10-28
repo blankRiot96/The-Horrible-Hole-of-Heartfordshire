@@ -4,7 +4,8 @@ import pygame
 
 from . import shared
 from .gameobject import GameObject
-from .gamestate import GameStateManager, TestState
+from .gamestate import GameStateManager
+from .playstate import PlayState
 
 
 class Core:
@@ -14,13 +15,13 @@ class Core:
         shared.dt = 0.0
         shared.events = []
 
-        test_state = TestState()
-        GameStateManager().add_state(test_state)
-        GameStateManager().set_state("TestState")
+        play_state = PlayState()
+        GameStateManager().add_state(play_state)
+        GameStateManager().set_state("PlayState")
 
     def win_init(self):
         pygame.init()
-        shared.screen = pygame.display.set_mode((1024, 600))
+        shared.screen = pygame.display.set_mode(shared.WIN_SIZE)
         shared.camera_pos = pygame.Vector2(shared.screen.get_rect().center)
         shared.clock = pygame.time.Clock()
         pygame.display.set_caption("Title")
@@ -42,7 +43,7 @@ class Core:
         GameStateManager().update()
 
     def draw(self):
-        shared.screen.fill("black")
+        shared.screen.fill((150, 150, 150))
         GameStateManager().draw()
         pygame.display.flip()
 

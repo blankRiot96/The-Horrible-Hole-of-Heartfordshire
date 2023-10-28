@@ -56,25 +56,3 @@ class GameStateManager:
     def handle_events(self) -> None:
         if self.state is not None:
             self.state.handle_events()
-
-
-class TestState(GameState):
-    def __init__(self) -> None:
-        super().__init__("TestState")
-        self.color = (0, 0, 0)
-
-    def handle_events(self) -> None:
-        for event in shared.events:
-            if event.type == pygame.KEYDOWN:
-                self.get_random_color()
-
-    def update(self) -> None:
-        pass
-
-    def draw(self) -> None:
-        shared.screen.fill(self.color)
-
-    def get_random_color(self) -> None:
-        from random import randint
-
-        self.color = (randint(0, 255), randint(0, 255), randint(0, 255))

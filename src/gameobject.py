@@ -39,5 +39,5 @@ class GameObject:
     def draw(self) -> None:
         if self.is_visible and self.image is not None:
             shared.screen.blit(
-                self.image, self.image.get_rect(center=get_relative_pos(self.pos))
+                self.image, self.image.get_rect(topleft=get_relative_pos(self.pos))
             )
