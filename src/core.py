@@ -3,7 +3,6 @@ import asyncio
 import pygame
 
 from . import shared
-from .gameobject import GameObject
 from .gamestate import GameStateManager
 from .playstate import PlayState
 

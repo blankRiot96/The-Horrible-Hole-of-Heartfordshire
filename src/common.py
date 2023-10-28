@@ -1,4 +1,14 @@
+import os
+import sys
 import time
+
+
+# for pyinstaller compat, input relative path, get out absolute path
+def get_path(filename: str) -> str:
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, filename)  # type: ignore
+    else:
+        return filename
 
 
 class Time:
