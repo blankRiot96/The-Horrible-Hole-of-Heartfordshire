@@ -2,6 +2,11 @@ import os
 import sys
 import time
 
+import pygame
+import pytmx
+
+from . import shared
+
 
 # for pyinstaller compat, input relative path, get out absolute path
 def get_path(filename: str) -> str:
