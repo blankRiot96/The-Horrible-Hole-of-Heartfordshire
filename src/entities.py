@@ -4,7 +4,7 @@ from . import shared
 from .anim import Animation, get_frames
 from .common import render_at
 from .enums import DoorDirection, MovementType
-from .gameobject import GameObject, get_relative_pos
+from .gameobject import GameObject
 from .gamestate import GameStateManager
 
 

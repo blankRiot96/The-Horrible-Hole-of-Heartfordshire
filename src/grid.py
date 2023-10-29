@@ -99,10 +99,7 @@ class Grid:
 
     def draw(self):
         # self.draw_grid()
-        shared.screen.blit(self.background, get_relative_pos((0, 0)))
-        # for entity in shared.entities:
-        #     if entity is not shared.player:
-        #         entity.draw()
+        shared.screen.blit(self.background, get_relative_pos(pygame.Vector2()))
 
         bg_entities, fg_entities = self.filter_entities()
         for entity in bg_entities:
