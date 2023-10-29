@@ -7,8 +7,8 @@ from .grid import Grid
 
 
 def load_room():
-    """Loads room from rood ID"""
-    shared.room_map = pytmx.load_pygame(shared.ROOMS_PATH / f"{shared.room_id}.tmx")
+    """Loads room from room ID"""
+    shared.room_map = pytmx.load_pygame(shared.ROOMS_PATH / f"{shared.room_id}.tmx")  # type: ignore
     shared.rows = shared.room_map.height
     shared.cols = shared.room_map.width
 

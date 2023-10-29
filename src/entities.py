@@ -4,7 +4,7 @@ from . import shared
 from .anim import Animation, get_frames
 from .common import render_at
 from .enums import DoorDirection, MovementType
-from .gameobject import GameObject
+from .gameobject import GameObject, get_relative_pos
 from .gamestate import GameStateManager
 
 
@@ -102,6 +102,28 @@ class Wall(Entity):
         super().__init__(cell, MovementType.STATIC, image)
 
 
+class Pillar(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.STATIC, image)
+
+
+class Foreground(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.FIXED, image)
+
+
 class Player(Entity):
     CONTROLS = {
         # Arrow keys
@@ -129,10 +151,12 @@ class Player(Entity):
         self.init_anim()
 
     def init_anim(self):
-        frames = get_frames(shared.ART_PATH / "player-64.png", (32, 64))
+        frames = get_frames(shared.ART_PATH / "player-128.png", (64, 128))
 
         for index, frame in enumerate(frames):
-            base = pygame.Surface((shared.TILE_SIDE, shared.TILE_SIDE), pygame.SRCALPHA)
+            base = pygame.Surface(
+                (shared.TILE_SIDE, 2 * shared.TILE_SIDE), pygame.SRCALPHA
+            )
             render_at(base, frame, "center")
             frames[index] = base
 
@@ -201,6 +225,12 @@ class Player(Entity):
         super().update()
         self.scan_surroundings()
         self.update_anim()
+
+    def draw(self):
+        if self.is_visible and self.image is not None:
+            shared.screen.blit(
+                self.image, self.image.get_rect(midleft=get_relative_pos(self.pos))
+            )
 
 
 class Stone(Entity):

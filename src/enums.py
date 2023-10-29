@@ -2,9 +2,13 @@ from enum import Enum, auto
 
 
 class MovementType(Enum):
+    # FIXED -> foreground things that don't move
     FIXED = auto()
+    # STATIC -> background things that don't move
     STATIC = auto()
+    # PUSHED -> Things the player can push
     PUSHED = auto()
+    # CONTROLLED -> player
     CONTROLLED = auto()
 
 

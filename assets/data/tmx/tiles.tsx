@@ -6,15 +6,18 @@
  <tile id="2" type="wall"/>
  <tile id="3" type="wall"/>
  <tile id="4" type="wall"/>
+ <tile id="5" type="foreground"/>
  <tile id="6" type="wall"/>
  <tile id="7" type="wall"/>
  <tile id="8" type="wall"/>
  <tile id="9" type="wall"/>
  <tile id="10" type="wall"/>
+ <tile id="11" type="foreground"/>
  <tile id="12" type="wall"/>
  <tile id="13" type="wall"/>
  <tile id="15" type="wall"/>
  <tile id="16" type="wall"/>
+ <tile id="17" type="pillar"/>
  <tile id="18" type="wall"/>
  <tile id="19" type="wall"/>
  <tile id="20" type="wall"/>
