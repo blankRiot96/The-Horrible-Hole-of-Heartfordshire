@@ -2,10 +2,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-import pygame
-
-from . import shared
-
 
 class GameState(ABC):
     def __init__(self, name: str) -> None:
