@@ -149,7 +149,7 @@ class Player(Entity):
             (-1, 0): Animation(west_frames, anim_cd),
             (0, 1): Animation(south_frames, anim_cd),
         }
-        self.last_direction = self.direction
+        self.last_direction = (0, 1)
 
     def scan_controls(self):
         if self.moving:
@@ -163,6 +163,8 @@ class Player(Entity):
             if shared.keys[control]:
                 self.direction = Player.CONTROLS[control]
 
+        if self.direction == (0, 0):
+            return
         self.last_direction = self.direction
 
     def scan_surroundings(self):
