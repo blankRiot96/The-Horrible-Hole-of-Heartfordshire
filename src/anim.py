@@ -41,6 +41,6 @@ class Animation:
         self.timer = Time(self.animation_cooldown)
         self.current_frame = next(self.frames)
 
-    def update(self):
+    def update(self) -> None:
         if self.timer.tick():
             self.current_frame = next(self.frames)

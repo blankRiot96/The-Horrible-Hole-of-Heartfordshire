@@ -26,24 +26,24 @@ class Entity(GameObject):
         return self._direction
 
     @direction.setter
-    def direction(self, new_direction):
+    def direction(self, new_direction) -> None:
         self._direction = new_direction
         self.desired_cell = self.cell + self.direction
         self.desired_pos = self.desired_cell * shared.TILE_SIDE
         self.moving = True
 
-    def move(self):
+    def move(self) -> None:
         self.pos.move_towards_ip(self.desired_pos, shared.ENTITY_SPEED * shared.dt)
         self.rect.topleft = self.pos
 
-    def transfer_cell(self):
+    def transfer_cell(self) -> None:
         if self.pos == self.desired_pos:
             self.cell = self.desired_cell.copy()
             self.moving = False
         else:
             self.moving = True
 
-    def update(self):
+    def update(self) -> None:
         self.move()
         self.transfer_cell()
 
@@ -150,7 +150,7 @@ class Player(Entity):
         self.direction = shared.next_door.value
         self.init_anim()
 
-    def init_anim(self):
+    def init_anim(self) -> None:
         frames = get_frames(shared.ART_PATH / "player-128.png", (64, 128))
 
         for index, frame in enumerate(frames):
@@ -175,7 +175,7 @@ class Player(Entity):
         }
         self.last_direction = (0, 1)
 
-    def scan_controls(self):
+    def scan_controls(self) -> None:
         if self.moving:
             return
 
@@ -191,7 +191,7 @@ class Player(Entity):
             return
         self.last_direction = self.direction
 
-    def scan_surroundings(self):
+    def scan_surroundings(self) -> None:
         for entity in shared.entities:
             if entity.cell == self.cell:
                 continue
@@ -213,20 +213,20 @@ class Player(Entity):
 
                 self.direction = (0, 0)
 
-    def update_anim(self):
+    def update_anim(self) -> None:
         if not self.moving or self.direction == (0, 0):
             self.image = self.anims[self.last_direction].indexable_frames[0]
             return
         self.anims[self.direction].update()
         self.image = self.anims[self.direction].current_frame
 
-    def update(self):
+    def update(self) -> None:
         self.scan_controls()
         super().update()
         self.scan_surroundings()
         self.update_anim()
 
-    def draw(self):
+    def draw(self) -> None:
         if self.is_visible and self.image is not None:
             shared.screen.blit(
                 self.image, self.image.get_rect(midleft=get_relative_pos(self.pos))
@@ -243,7 +243,7 @@ class Stone(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.PUSHED, image)
 
-    def scan_surroundings(self):
+    def scan_surroundings(self) -> None:
         for entity in shared.entities:
             if entity.cell == self.cell:
                 continue
@@ -259,6 +259,6 @@ class Stone(Entity):
             ):
                 self.direction = (0, 0)
 
-    def update(self):
+    def update(self) -> None:
         super().update()
         self.scan_surroundings()

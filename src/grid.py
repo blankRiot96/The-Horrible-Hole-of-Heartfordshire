@@ -29,16 +29,16 @@ class Grid:
             pygame.SRCALPHA,
         )
 
-    def add_entity(self, entity):
+    def add_entity(self, entity) -> None:
         shared.entities.append(entity)
 
-    def update(self):
+    def update(self) -> None:
         for entity in shared.entities:
             entity.update()
 
     def place_entity(
         self, row, col, entity_id, image: pygame.Surface, properties: dict
-    ):
+    ) -> None:
         entity = Grid.ENTITIES.get(entity_id)
         if entity is None:
             self.background.blit(
@@ -62,7 +62,7 @@ class Grid:
 
         self.align_player_pos()
 
-    def align_player_pos(self):
+    def align_player_pos(self) -> None:
         for entity in shared.entities:
             if isinstance(entity, Door) and entity.door_direction == shared.next_door:
                 player_index = shared.entities.index(shared.player)
@@ -74,7 +74,7 @@ class Grid:
 
                 return
 
-    def draw_grid(self):
+    def draw_grid(self) -> None:
         for row in range(shared.rows + 1):
             start = 0, row * shared.TILE_SIDE
             end = shared.WIN_WIDTH, row * shared.TILE_SIDE
@@ -85,7 +85,7 @@ class Grid:
             end = col * shared.TILE_SIDE, shared.WIN_HEIGHT
             pygame.draw.line(shared.screen, Grid.LINE_COLOR, start, end)
 
-    def filter_entities(self):
+    def filter_entities(self) -> tuple[list[Entity], list[Entity]]:
         background_entities: list[Entity] = []
         foreground_entities: list[Entity] = []
 
@@ -95,9 +95,9 @@ class Grid:
             if entity.movement_type == MovementType.FIXED:
                 foreground_entities.append(entity)
 
-        return [background_entities, foreground_entities]
+        return background_entities, foreground_entities
 
-    def draw(self):
+    def draw(self) -> None:
         # self.draw_grid()
         shared.screen.blit(self.background, get_relative_pos(pygame.Vector2()))
 

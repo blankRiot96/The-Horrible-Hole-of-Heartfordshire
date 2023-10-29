@@ -25,7 +25,7 @@ class PlayState(GameState):
     def handle_events(self) -> None:
         ...
 
-    def handle_camera(self):
+    def handle_camera(self) -> None:
         shared.camera_pos.move_towards_ip(
             shared.player.rect.center, self.cam_speed * shared.dt
         )
@@ -33,9 +33,9 @@ class PlayState(GameState):
             shared.camera_pos.distance_to(shared.player.rect.center) / 75
         )
 
-    def update(self):
+    def update(self) -> None:
         self.grid.update()
         self.handle_camera()
 
-    def draw(self):
+    def draw(self) -> None:
         self.grid.draw()
