@@ -2,15 +2,29 @@ import pygame
 
 from . import shared
 from .entities import Door, Player, Stone, Torch, Wall
+from .gameobject import get_relative_pos
 
 
 class Grid:
     LINE_COLOR = "black"
 
-    ENTITIES = {0: Door, 1: Player, 2: Stone, 3: Wall, 7: Torch}
+    ENTITIES = {
+        "door": Door,
+        "player": Player,
+        "stone": Stone,
+        "wall": Wall,
+        "torch": Torch,
+    }
 
     def __init__(self) -> None:
         shared.entities = []
+        self.background = pygame.Surface(
+            (
+                shared.TILE_SIDE * shared.room_map.width,
+                shared.TILE_SIDE * shared.room_map.height,
+            ),
+            pygame.SRCALPHA,
+        )
 
     def add_entity(self, entity):
         shared.entities.append(entity)
@@ -20,10 +34,13 @@ class Grid:
             entity.update()
 
     def place_entity(
-        self, row, col, entity_no, image: pygame.Surface, properties: dict
+        self, row, col, entity_id, image: pygame.Surface, properties: dict
     ):
-        entity = Grid.ENTITIES.get(entity_no)
+        entity = Grid.ENTITIES.get(entity_id)
         if entity is None:
+            self.background.blit(
+                image, (col * shared.TILE_SIDE, row * shared.TILE_SIDE)
+            )
             return
         self.add_entity(entity((col, row), image, properties))
 
@@ -32,10 +49,27 @@ class Grid:
             for x, y, image in layer.tiles():
                 gid = layer.data[y][x]
                 properties = shared.room_map.get_tile_properties_by_gid(gid)
-                entity_id = properties["id"]
+                if properties is None:
+                    entity_id = None
+                else:
+                    entity_id = properties["type"]
                 self.place_entity(
-                    y, x, entity_no=entity_id, image=image, properties=properties
+                    y, x, entity_id=entity_id, image=image, properties=properties
                 )
+
+        self.align_player_pos()
+
+    def align_player_pos(self):
+        for entity in shared.entities:
+            if isinstance(entity, Door) and entity.door_direction == shared.next_door:
+                player_index = shared.entities.index(shared.player)
+                shared.entities[player_index] = Player(
+                    entity.cell,
+                    shared.player.image,
+                    shared.player.properties,
+                )
+
+                return
 
     def draw_grid(self):
         for row in range(shared.rows + 1):
@@ -50,5 +84,6 @@ class Grid:
 
     def draw(self):
         # self.draw_grid()
+        shared.screen.blit(self.background, get_relative_pos((0, 0)))
         for entity in shared.entities:
             entity.draw()

@@ -1,18 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="64" tileheight="64" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" source="../tmx/placeholders.tsx"/>
- <layer id="1" name="Tile Layer 1" width="10" height="10">
+ <tileset firstgid="10" source="../tmx/tiles.tsx"/>
+ <layer id="2" name="Tile Layer 2" width="10" height="10">
   <data encoding="csv">
-4,4,4,4,1,4,4,4,4,4,
-4,8,0,0,0,0,0,0,8,4,
-4,0,0,0,0,0,0,0,0,4,
-4,0,0,0,0,3,0,0,0,4,
-4,0,0,0,0,0,0,0,0,4,
-4,0,0,0,0,0,0,0,0,1,
-4,0,0,0,0,0,0,0,0,4,
-4,0,0,0,0,0,0,0,0,4,
-4,8,0,0,2,0,0,0,8,4,
-4,4,4,4,1,4,4,4,4,4
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24,
+24,24,24,24,24,24,24,24,24,24
+</data>
+ </layer>
+ <layer id="1" name="Tile Layer 1" width="10" height="10" visible="0">
+  <data encoding="csv">
+10,11,11,11,1,11,11,11,11,14,
+28,40,0,0,0,0,0,0,40,20,
+28,0,0,0,0,0,0,0,0,20,
+28,0,0,0,0,3,0,0,0,20,
+28,0,0,0,0,0,0,0,0,20,
+28,0,0,0,0,0,0,0,0,1,
+28,0,0,0,0,0,0,0,0,20,
+28,0,0,0,0,0,0,0,0,20,
+28,40,0,0,2,0,0,0,40,20,
+34,37,37,37,1,37,37,37,37,38
 </data>
  </layer>
 </map>

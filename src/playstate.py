@@ -19,14 +19,23 @@ class PlayState(GameState):
         load_room()
         self.grid = Grid()
         self.grid.load_entities_from_room()
-        shared.camera_pos = pygame.Vector2()
+        shared.camera_pos = pygame.Vector2(shared.player.rect.center)
+        self.cam_speed = shared.ENTITY_SPEED * 0.65
 
     def handle_events(self) -> None:
         ...
 
+    def handle_camera(self):
+        shared.camera_pos.move_towards_ip(
+            shared.player.rect.center, self.cam_speed * shared.dt
+        )
+        self.cam_speed = (shared.ENTITY_SPEED * 0.65) * (
+            shared.camera_pos.distance_to(shared.player.rect.center) / 75
+        )
+
     def update(self):
         self.grid.update()
-        shared.camera_pos.move_towards_ip(shared.player.rect.center, 1000 * shared.dt)
+        self.handle_camera()
 
     def draw(self):
         self.grid.draw()
