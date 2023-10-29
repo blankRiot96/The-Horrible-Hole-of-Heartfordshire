@@ -1,5 +1,10 @@
 import time
 
+import pygame
+import pytmx
+
+from . import shared
+
 
 class Time:
     """Class to check if a certain amount of time has passed."""

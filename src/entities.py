@@ -3,8 +3,9 @@ import abc
 import pygame
 
 from . import shared
-from .enums import MovementType
+from .enums import DoorDirection, MovementType
 from .gameobject import GameObject
+from .gamestate import GameStateManager
 
 
 class Entity(GameObject):
@@ -48,10 +49,49 @@ class Entity(GameObject):
         self.transfer_cell()
 
 
+class Torch(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.STATIC, image)
+
+
+class Door(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.STATIC, image)
+
+        if self.cell[1] == 0:
+            self.door_direction = DoorDirection.NORTH
+            self.room_delta = -3
+        elif self.cell[0] == shared.room_map.width - 1:
+            self.door_direction = DoorDirection.EAST
+            self.room_delta = 1
+        elif self.cell[0] == 0:
+            self.door_direction = DoorDirection.WEST
+            self.room_delta = -1
+        elif self.cell[1] == shared.room_map.height - 1:
+            self.door_direction = DoorDirection.SOUTH
+            self.room_delta = 3
+
+
 class Wall(Entity):
-    def __init__(self, cell: tuple[int, int]) -> None:
-        image = pygame.Surface(shared.TILE_SIZE)
-        image.fill("brown")
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
         super().__init__(cell, MovementType.STATIC, image)
 
 
@@ -69,10 +109,15 @@ class Player(Entity):
         pygame.K_s: (0, 1),
     }
 
-    def __init__(self, cell: tuple[int, int]) -> None:
-        image = pygame.Surface(shared.TILE_SIZE)
-        image.fill("red")
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
         super().__init__(cell, MovementType.CONTROLLED, image)
+        shared.player = self
 
     def scan_controls(self):
         if self.moving:
@@ -101,6 +146,10 @@ class Player(Entity):
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.STATIC
             ):
+                if isinstance(entity, Door):
+                    shared.room_id += entity.room_delta
+                    GameStateManager().set_state("PlayState")
+
                 self.direction = (0, 0)
 
     def update(self):
@@ -110,9 +159,13 @@ class Player(Entity):
 
 
 class Stone(Entity):
-    def __init__(self, cell) -> None:
-        image = pygame.Surface(shared.TILE_SIZE)
-        image.fill((50, 50, 50))
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
         super().__init__(cell, MovementType.PUSHED, image)
 
     def scan_surroundings(self):

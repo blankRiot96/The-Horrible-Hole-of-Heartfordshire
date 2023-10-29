@@ -2,6 +2,9 @@
 name = "untitled"
 description = "a game for the PGC halloween jam 2023"
 version = "0.1.0"
+authors = [
+    { name = "Unknown", email = "unknown@email.com" }
+]
 dependencies = [
     "pygame-ce >= 2.3.2",
     "pytmx >= 3.32"

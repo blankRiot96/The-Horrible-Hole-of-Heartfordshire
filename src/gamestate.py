@@ -35,15 +35,15 @@ class GameStateManager:
 
     def __init__(self) -> None:
         if not GameStateManager.__initialized:
-            self.states: dict[str, GameState] = {}
+            self.states: dict[str, type] = {}
             self.state: GameState | None = None
             GameStateManager.__initialized = True
 
-    def add_state(self, state: GameState) -> None:
-        self.states[state.name] = state
+    def add_state(self, state: type) -> None:
+        self.states[state.__name__] = state
 
     def set_state(self, name: str) -> None:
-        self.state = self.states[name]
+        self.state = self.states[name]()
 
     def update(self) -> None:
         if self.state is not None:

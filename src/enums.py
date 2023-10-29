@@ -6,3 +6,10 @@ class MovementType(Enum):
     STATIC = auto()
     PUSHED = auto()
     CONTROLLED = auto()
+
+
+class DoorDirection:
+    NORTH = auto()
+    EAST = auto()
+    WEST = auto()
+    SOUTH = auto()

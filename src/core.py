@@ -15,14 +15,12 @@ class Core:
         shared.dt = 0.0
         shared.events = []
 
-        play_state = PlayState()
-        GameStateManager().add_state(play_state)
+        GameStateManager().add_state(PlayState)
         GameStateManager().set_state("PlayState")
 
     def win_init(self):
         pygame.init()
         shared.screen = pygame.display.set_mode(shared.WIN_SIZE)
-        shared.camera_pos = pygame.Vector2(shared.screen.get_rect().center)
         shared.clock = pygame.time.Clock()
         pygame.display.set_caption("Title")
 
@@ -43,7 +41,7 @@ class Core:
         GameStateManager().update()
 
     def draw(self):
-        shared.screen.fill((150, 150, 150))
+        shared.screen.fill("black")
         GameStateManager().draw()
         pygame.display.flip()
 
