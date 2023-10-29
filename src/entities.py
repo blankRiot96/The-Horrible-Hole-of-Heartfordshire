@@ -1,8 +1,8 @@
-import abc
-
 import pygame
 
 from . import shared
+from .anim import Animation, get_frames
+from .common import render_at
 from .enums import DoorDirection, MovementType
 from .gameobject import GameObject
 from .gamestate import GameStateManager
@@ -10,10 +10,9 @@ from .gamestate import GameStateManager
 
 class Entity(GameObject):
     def __init__(self, cell, movement_type, image) -> None:
-        self.cell = cell
+        self.cell = pygame.Vector2(cell)
         self.movement_type = movement_type
 
-        self.cell = pygame.Vector2(cell)
         self.pos = self.cell * shared.TILE_SIDE
         self.rect = image.get_rect(topleft=self.pos)
         self.desired_cell = self.cell.copy()
@@ -61,6 +60,13 @@ class Torch(Entity):
 
 
 class Door(Entity):
+    DOOR_CONNECTION = {
+        DoorDirection.SOUTH: DoorDirection.NORTH,
+        DoorDirection.NORTH: DoorDirection.SOUTH,
+        DoorDirection.WEST: DoorDirection.EAST,
+        DoorDirection.EAST: DoorDirection.WEST,
+    }
+
     def __init__(
         self,
         cell: tuple[int, int],
@@ -82,6 +88,7 @@ class Door(Entity):
         elif self.cell[1] == shared.room_map.height - 1:
             self.door_direction = DoorDirection.SOUTH
             self.room_delta = 3
+        self.next_door = Door.DOOR_CONNECTION.get(self.door_direction)
 
 
 class Wall(Entity):
@@ -118,6 +125,31 @@ class Player(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.CONTROLLED, image)
         shared.player = self
+        self.direction = shared.next_door.value
+        self.init_anim()
+
+    def init_anim(self):
+        frames = get_frames(shared.ART_PATH / "player-64.png", (32, 64))
+
+        for index, frame in enumerate(frames):
+            base = pygame.Surface((shared.TILE_SIDE, shared.TILE_SIDE), pygame.SRCALPHA)
+            render_at(base, frame, "center")
+            frames[index] = base
+
+        south_frames = frames[:4]
+        east_frames = frames[4:8]
+        west_frames = [
+            pygame.transform.flip(frame, True, False) for frame in east_frames
+        ]
+        north_frames = frames[8:12]
+        anim_cd = 0.2
+        self.anims = {
+            (0, -1): Animation(north_frames, anim_cd),
+            (1, 0): Animation(east_frames, anim_cd),
+            (-1, 0): Animation(west_frames, anim_cd),
+            (0, 1): Animation(south_frames, anim_cd),
+        }
+        self.last_direction = self.direction
 
     def scan_controls(self):
         if self.moving:
@@ -130,6 +162,8 @@ class Player(Entity):
         for control in Player.CONTROLS:
             if shared.keys[control]:
                 self.direction = Player.CONTROLS[control]
+
+        self.last_direction = self.direction
 
     def scan_surroundings(self):
         for entity in shared.entities:
@@ -148,14 +182,23 @@ class Player(Entity):
             ):
                 if isinstance(entity, Door):
                     shared.room_id += entity.room_delta
+                    shared.next_door = entity.next_door
                     GameStateManager().set_state("PlayState")
 
                 self.direction = (0, 0)
+
+    def update_anim(self):
+        if not self.moving or self.direction == (0, 0):
+            self.image = self.anims[self.last_direction].indexable_frames[0]
+            return
+        self.anims[self.direction].update()
+        self.image = self.anims[self.direction].current_frame
 
     def update(self):
         self.scan_controls()
         super().update()
         self.scan_surroundings()
+        self.update_anim()
 
 
 class Stone(Entity):
