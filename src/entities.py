@@ -19,6 +19,7 @@ class Entity(GameObject):
         self.desired_pos = self.pos.copy()
         self._direction = (0, 0)
         self.moving = False
+        self.is_alive = True
         super().__init__(self.pos, is_visible=True, is_interactable=True, image=image)
 
     @property
@@ -76,16 +77,18 @@ class Door(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.STATIC, image)
 
-        if self.cell[1] == 0:
+        # making temporary comparisons to allow for doors that are taller
+        # but also the placeholder single doors
+        if self.cell[1] <= 1:
             self.door_direction = DoorDirection.NORTH
             self.room_delta = -3
-        elif self.cell[0] == shared.room_map.width - 1:
+        elif self.cell[0] >= shared.room_map.width - 2:
             self.door_direction = DoorDirection.EAST
             self.room_delta = 1
-        elif self.cell[0] == 0:
+        elif self.cell[0] <= 1:
             self.door_direction = DoorDirection.WEST
             self.room_delta = -1
-        elif self.cell[1] == shared.room_map.height - 1:
+        elif self.cell[1] >= shared.room_map.height - 2:
             self.door_direction = DoorDirection.SOUTH
             self.room_delta = 3
         self.next_door = Door.DOOR_CONNECTION.get(self.door_direction)
@@ -212,6 +215,11 @@ class Player(Entity):
                     GameStateManager().set_state("PlayState")
 
                 self.direction = (0, 0)
+            if (
+                entity.cell == self.desired_cell
+                and entity.movement_type == MovementType.HOLE
+            ):
+                self.direction = (0, 0)
 
     def update_anim(self) -> None:
         if not self.moving or self.direction == (0, 0):
@@ -242,11 +250,16 @@ class Stone(Entity):
     ) -> None:
         self.properties = properties
         super().__init__(cell, MovementType.PUSHED, image)
+        self.falling = False
+        self.anims = None
 
     def scan_surroundings(self) -> None:
         for entity in shared.entities:
             if entity.cell == self.cell:
-                continue
+                if isinstance(entity, Hole):
+                    self.falling = True
+                else:
+                    continue
             if (
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.PUSHED
@@ -262,3 +275,39 @@ class Stone(Entity):
     def update(self) -> None:
         super().update()
         self.scan_surroundings()
+        if self.falling:
+            try:
+                self.animate_fall()
+            except StopIteration:
+                self.is_alive = False
+
+    def set_falling(self, toggle: bool) -> None:
+        self.falling = toggle
+
+    def animate_fall(self) -> None:
+        if self.anims is None:
+            cd = 0.2
+            frames: list[pygame.Surface] = [self.image.copy()]
+
+            fall_distance = 0
+            while fall_distance < self.image.get_height():
+                self.image.scroll(0, 4)
+                frames.append(self.image.copy())
+                fall_distance += 4
+
+            self.anims = Animation(frames, cd, False)
+            self.image.scroll(0, -64)
+
+        self.anims.update()
+        self.image = self.anims.current_frame
+
+
+class Hole(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.HOLE, image)

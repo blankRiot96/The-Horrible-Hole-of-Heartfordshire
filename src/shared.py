@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pygame
+
 import pytmx
 
 from .entities import Entity, Player
