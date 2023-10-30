@@ -4,7 +4,7 @@ from . import shared
 from .anim import Animation, get_frames
 from .bloom import Bloom
 from .common import render_at
-from .enums import DoorDirection, MovementType
+from .enums import DoorDirection, MovementType, StoneSymbol
 from .gameobject import GameObject, get_relative_pos
 from .gamestate import GameStateManager
 
@@ -33,6 +33,9 @@ class Entity(GameObject):
         self.desired_cell = self.cell + self.direction
         self.desired_pos = self.desired_cell * shared.TILE_SIDE
         self.moving = True
+
+    def request_direction(self, new_direction) -> bool:
+        return True
 
     def get_cell_diff(self, other_cell):
         return abs(self.cell[0] - other_cell[0]), abs(self.cell[1] - other_cell[1])
@@ -205,7 +208,8 @@ class Player(Entity):
         shared.player = self
         self.direction = shared.next_door.value
         self.init_anim()
-        self.bloom = Bloom((300, 300), wave_speed=2, expansion_factor=35)
+        self.bloom = Bloom((500, 500), wave_speed=2, expansion_factor=35)
+        self.img_rect = self.image.get_rect()
 
     def init_anim(self) -> None:
         frames = get_frames(shared.ART_PATH / "player-128.png", (64, 128))
@@ -257,7 +261,10 @@ class Player(Entity):
                 and entity.movement_type == MovementType.PUSHED
                 and isinstance(entity, Stone)
             ):
-                entity.direction = self.direction
+                if entity.request_direction(self.direction):
+                    entity.direction = self.direction
+                else:
+                    self.direction = (0, 0)
 
             if (
                 entity.cell == self.desired_cell
@@ -285,7 +292,8 @@ class Player(Entity):
     def update(self) -> None:
         self.scan_controls()
         super().update()
-        self.bloom.update(self.rect.center)
+        self.img_rect.center = self.rect.center
+        self.bloom.update(self.img_rect.center)
         self.scan_surroundings()
         self.update_anim()
 
@@ -294,9 +302,18 @@ class Player(Entity):
             shared.screen.blit(
                 self.image, self.image.get_rect(midleft=get_relative_pos(self.pos))
             )
+        self.bloom.draw()
 
 
 class Stone(Entity):
+    SYMBOL_MAP = {
+        "teacup": StoneSymbol.TEACUP,
+        "switzerland": StoneSymbol.SWITZERLAND,
+        "pirate": StoneSymbol.PIRATE,
+        "wales": StoneSymbol.WALES,
+        "ireland": StoneSymbol.IRELAND,
+    }
+
     def __init__(
         self,
         cell: tuple[int, int],
@@ -307,6 +324,7 @@ class Stone(Entity):
         super().__init__(cell, MovementType.PUSHED, image)
         self.falling = False
         self.anims = None
+        self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
 
     def scan_surroundings(self) -> None:
         if self.falling:
@@ -314,11 +332,17 @@ class Stone(Entity):
             return
 
         for entity in shared.entities:
+            if entity.cell == self.desired_cell:
+                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                    self.direction = (0, 0)
+                    return
+
             if entity.cell == self.cell:
-                if isinstance(entity, Hole):
+                if isinstance(entity, Hole) and self.symbol == entity.symbol:
                     self.falling = True
                 else:
                     continue
+
             if (
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.PUSHED
@@ -330,6 +354,19 @@ class Stone(Entity):
                 and entity.movement_type == MovementType.STATIC
             ):
                 self.direction = (0, 0)
+                return
+
+    def request_direction(self, new_direction) -> bool:
+        desired_cell = self.cell + new_direction
+
+        for entity in shared.entities:
+            if entity.cell == desired_cell:
+                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                    return False
+                elif entity.movement_type == MovementType.STATIC:
+                    return False
+
+        return True
 
     def update(self) -> None:
         super().update()
@@ -376,3 +413,4 @@ class Hole(Entity):
     ) -> None:
         self.properties = properties
         super().__init__(cell, MovementType.HOLE, image)
+        self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])

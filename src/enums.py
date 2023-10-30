@@ -24,3 +24,11 @@ class DoorDirection(Enum):
     EAST = (-1, 0)
     WEST = (1, 0)
     SOUTH = (0, -1)
+
+
+class StoneSymbol(Enum):
+    TEACUP = auto()
+    SWITZERLAND = auto()
+    PIRATE = auto()
+    WALES = auto()
+    IRELAND = auto()
