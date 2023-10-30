@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="tiles" tilewidth="64" tileheight="64" tilecount="36" columns="6">
- <image source="../../art/tileset-64.png" width="384" height="384"/>
+<tileset version="1.10" tiledversion="1.10.2" name="tiles" tilewidth="64" tileheight="64" tilecount="78" columns="6">
+ <image source="../../art/tileset-64.png" width="384" height="832"/>
  <tile id="0" type="wall"/>
  <tile id="1" type="wall"/>
  <tile id="2" type="wall"/>
@@ -29,4 +29,40 @@
  <tile id="27" type="wall"/>
  <tile id="28" type="wall"/>
  <tile id="30" type="torch"/>
+ <tile id="36" type="hole"/>
+ <tile id="37" type="hole"/>
+ <tile id="38" type="hole"/>
+ <tile id="39" type="hole"/>
+ <tile id="40" type="hole"/>
+ <tile id="41" type="hole"/>
+ <tile id="42" type="stone"/>
+ <tile id="43" type="stone"/>
+ <tile id="44" type="stone"/>
+ <tile id="45" type="stone"/>
+ <tile id="46" type="stone"/>
+ <tile id="47" type="stone"/>
+ <tile id="48" type="wall"/>
+ <tile id="49" type="wall"/>
+ <tile id="50" type="wall"/>
+ <tile id="51" type="wall"/>
+ <tile id="52" type="door"/>
+ <tile id="53" type="wall"/>
+ <tile id="54" type="wall"/>
+ <tile id="55" type="door"/>
+ <tile id="56" type="wall"/>
+ <tile id="57" type="wall"/>
+ <tile id="58" type="wall"/>
+ <tile id="59" type="wall"/>
+ <tile id="62" type="wall"/>
+ <tile id="63" type="wall"/>
+ <tile id="64" type="wall"/>
+ <tile id="65" type="wall"/>
+ <tile id="68" type="wall"/>
+ <tile id="69" type="door"/>
+ <tile id="70" type="door"/>
+ <tile id="71" type="wall"/>
+ <tile id="74" type="wall"/>
+ <tile id="75" type="wall"/>
+ <tile id="76" type="wall"/>
+ <tile id="77" type="wall"/>
 </tileset>

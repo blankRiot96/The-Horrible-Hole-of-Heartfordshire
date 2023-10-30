@@ -33,10 +33,16 @@ def get_frames(
 
 class Animation:
     def __init__(
-        self, frames: Sequence[pygame.Surface], animation_cooldown: float
+        self,
+        frames: Sequence[pygame.Surface],
+        animation_cooldown: float,
+        is_cycle: bool = True,
     ) -> None:
         self.indexable_frames = tuple(frames)
-        self.frames = cycle(frames)
+        if is_cycle:
+            self.frames = cycle(frames)
+        else:
+            self.frames = iter(frames)
         self.animation_cooldown = animation_cooldown
         self.timer = Time(self.animation_cooldown)
         self.current_frame = next(self.frames)

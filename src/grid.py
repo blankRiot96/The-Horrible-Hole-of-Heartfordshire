@@ -1,7 +1,7 @@
 import pygame
 
 from . import shared
-from .entities import Door, Entity, Foreground, Pillar, Player, Stone, Torch, Wall
+from .entities import Door, Entity, Foreground, Hole, Pillar, Player, Stone, Torch, Wall
 from .enums import MovementType
 from .gameobject import get_relative_pos
 
@@ -17,6 +17,7 @@ class Grid:
         "torch": Torch,
         "pillar": Pillar,
         "foreground": Foreground,
+        "hole": Hole,
     }
 
     def __init__(self) -> None:
@@ -32,7 +33,14 @@ class Grid:
     def add_entity(self, entity) -> None:
         shared.entities.append(entity)
 
+    def remove_unused_entities(self) -> None:
+        all_entities = shared.entities
+        for entity in all_entities:
+            if not entity.is_alive:
+                shared.entities.remove(entity)
+
     def update(self) -> None:
+        self.remove_unused_entities()
         for entity in shared.entities:
             entity.update()
 
@@ -96,6 +104,9 @@ class Grid:
                 foreground_entities.append(entity)
             else:
                 background_entities.append(entity)
+
+            # this just forces holes to be the first things drawn
+            background_entities.sort(key=lambda e: int(not isinstance(e, Hole)))
 
         return background_entities, foreground_entities
 

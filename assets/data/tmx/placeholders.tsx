@@ -5,4 +5,5 @@
  <tile id="1" type="player"/>
  <tile id="2" type="stone"/>
  <tile id="3" type="wall"/>
+ <tile id="8" type="hole"/>
 </tileset>
