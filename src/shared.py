@@ -1,11 +1,16 @@
+from __future__ import annotations
+
+import typing
 from pathlib import Path
 
 import pygame
 
 import pytmx
 
-from .entities import Entity, Player
 from .enums import DoorDirection
+
+if typing.TYPE_CHECKING:
+    from .entities import Entity, Player
 
 # Constants
 ASSETS_PATH = Path("assets/")

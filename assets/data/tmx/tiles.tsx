@@ -29,17 +29,57 @@
  <tile id="27" type="wall"/>
  <tile id="28" type="wall"/>
  <tile id="30" type="torch"/>
- <tile id="36" type="hole"/>
- <tile id="37" type="hole"/>
- <tile id="38" type="hole"/>
- <tile id="39" type="hole"/>
- <tile id="40" type="hole"/>
+ <tile id="36" type="hole">
+  <properties>
+   <property name="symbol" value="teacup"/>
+  </properties>
+ </tile>
+ <tile id="37" type="hole">
+  <properties>
+   <property name="symbol" value="switzerland"/>
+  </properties>
+ </tile>
+ <tile id="38" type="hole">
+  <properties>
+   <property name="symbol" value="pirate"/>
+  </properties>
+ </tile>
+ <tile id="39" type="hole">
+  <properties>
+   <property name="symbol" value="wales"/>
+  </properties>
+ </tile>
+ <tile id="40" type="hole">
+  <properties>
+   <property name="symbol" value="ireland"/>
+  </properties>
+ </tile>
  <tile id="41" type="hole"/>
- <tile id="42" type="stone"/>
- <tile id="43" type="stone"/>
- <tile id="44" type="stone"/>
- <tile id="45" type="stone"/>
- <tile id="46" type="stone"/>
+ <tile id="42" type="stone">
+  <properties>
+   <property name="symbol" value="teacup"/>
+  </properties>
+ </tile>
+ <tile id="43" type="stone">
+  <properties>
+   <property name="symbol" value="switzerland"/>
+  </properties>
+ </tile>
+ <tile id="44" type="stone">
+  <properties>
+   <property name="symbol" value="pirate"/>
+  </properties>
+ </tile>
+ <tile id="45" type="stone">
+  <properties>
+   <property name="symbol" value="wales"/>
+  </properties>
+ </tile>
+ <tile id="46" type="stone">
+  <properties>
+   <property name="symbol" value="ireland"/>
+  </properties>
+ </tile>
  <tile id="47" type="stone"/>
  <tile id="48" type="wall"/>
  <tile id="49" type="wall"/>
