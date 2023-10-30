@@ -18,13 +18,13 @@ class Core:
         GameStateManager().add_state(PlayState)
         GameStateManager().set_state("PlayState")
 
-    def win_init(self):
+    def win_init(self) -> None:
         pygame.init()
         shared.screen = pygame.display.set_mode(shared.WIN_SIZE)
         shared.clock = pygame.time.Clock()
         pygame.display.set_caption("Title")
 
-    def update(self):
+    def update(self) -> None:
         shared.events = pygame.event.get()
         for event in shared.events:
             if event.type == pygame.QUIT:
@@ -40,12 +40,12 @@ class Core:
 
         GameStateManager().update()
 
-    def draw(self):
+    def draw(self) -> None:
         shared.screen.fill("black")
         GameStateManager().draw()
         pygame.display.flip()
 
-    async def run(self):
+    async def run(self) -> None:
         while True:
             self.update()
             self.draw()

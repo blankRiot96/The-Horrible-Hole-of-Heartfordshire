@@ -46,7 +46,7 @@ class Time:
         self.time_to_pass = time_to_pass
         self.start = time.perf_counter()
 
-    def reset(self):
+    def reset(self) -> None:
         self.start = time.perf_counter()
 
     def tick(self) -> bool:

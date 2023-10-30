@@ -1,7 +1,8 @@
 import pygame
 
 from . import shared
-from .entities import Door, Player, Stone, Torch, Wall
+from .entities import Door, Entity, Foreground, Hole, Pillar, Player, Stone, Torch, Wall
+from .enums import MovementType
 from .gameobject import get_relative_pos
 
 
@@ -14,6 +15,9 @@ class Grid:
         "stone": Stone,
         "wall": Wall,
         "torch": Torch,
+        "pillar": Pillar,
+        "foreground": Foreground,
+        "hole": Hole,
     }
 
     def __init__(self) -> None:
@@ -26,16 +30,23 @@ class Grid:
             pygame.SRCALPHA,
         )
 
-    def add_entity(self, entity):
+    def add_entity(self, entity) -> None:
         shared.entities.append(entity)
 
-    def update(self):
+    def remove_unused_entities(self) -> None:
+        all_entities = shared.entities
+        for entity in all_entities:
+            if not entity.is_alive:
+                shared.entities.remove(entity)
+
+    def update(self) -> None:
+        self.remove_unused_entities()
         for entity in shared.entities:
             entity.update()
 
     def place_entity(
         self, row, col, entity_id, image: pygame.Surface, properties: dict
-    ):
+    ) -> None:
         entity = Grid.ENTITIES.get(entity_id)
         if entity is None:
             self.background.blit(
@@ -59,7 +70,7 @@ class Grid:
 
         self.align_player_pos()
 
-    def align_player_pos(self):
+    def align_player_pos(self) -> None:
         for entity in shared.entities:
             if isinstance(entity, Door) and entity.door_direction == shared.next_door:
                 player_index = shared.entities.index(shared.player)
@@ -71,7 +82,7 @@ class Grid:
 
                 return
 
-    def draw_grid(self):
+    def draw_grid(self) -> None:
         for row in range(shared.rows + 1):
             start = 0, row * shared.TILE_SIDE
             end = shared.WIN_WIDTH, row * shared.TILE_SIDE
@@ -82,8 +93,30 @@ class Grid:
             end = col * shared.TILE_SIDE, shared.WIN_HEIGHT
             pygame.draw.line(shared.screen, Grid.LINE_COLOR, start, end)
 
-    def draw(self):
-        # self.draw_grid()
-        shared.screen.blit(self.background, get_relative_pos((0, 0)))
+    def filter_entities(self) -> tuple[list[Entity], list[Entity]]:
+        background_entities: list[Entity] = []
+        foreground_entities: list[Entity] = []
+
         for entity in shared.entities:
+            if entity is shared.player:
+                continue
+            if entity.movement_type == MovementType.FOREGROUND:
+                foreground_entities.append(entity)
+            else:
+                background_entities.append(entity)
+
+            # this just forces holes to be the first things drawn
+            background_entities.sort(key=lambda e: int(not isinstance(e, Hole)))
+
+        return background_entities, foreground_entities
+
+    def draw(self) -> None:
+        # self.draw_grid()
+        shared.screen.blit(self.background, get_relative_pos(pygame.Vector2()))
+
+        bg_entities, fg_entities = self.filter_entities()
+        for entity in bg_entities:
+            entity.draw()
+        shared.player.draw()
+        for entity in fg_entities:
             entity.draw()

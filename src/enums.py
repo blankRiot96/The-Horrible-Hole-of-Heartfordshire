@@ -2,10 +2,18 @@ from enum import Enum, auto
 
 
 class MovementType(Enum):
+    # FIXED -> movement path
     FIXED = auto()
+    # STATIC -> background things that don't move
     STATIC = auto()
+    # PUSHED -> Things the player can push
     PUSHED = auto()
+    # CONTROLLED -> player
     CONTROLLED = auto()
+    # FOREGROUND -> foreground things
+    FOREGROUND = auto()
+    # HOLE -> holes. player can't walk over, but stones can be pushed over
+    HOLE = auto()
 
 
 class DoorDirection(Enum):
