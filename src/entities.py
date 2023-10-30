@@ -254,6 +254,10 @@ class Stone(Entity):
         self.anims = None
 
     def scan_surroundings(self) -> None:
+        if self.falling:
+            self.direction = (0, 0)
+            return
+
         for entity in shared.entities:
             if entity.cell == self.cell:
                 if isinstance(entity, Hole):
@@ -279,7 +283,8 @@ class Stone(Entity):
             try:
                 self.animate_fall()
             except StopIteration:
-                self.is_alive = False
+                self.falling = False
+                self.movement_type = MovementType.STATIC
 
     def set_falling(self, toggle: bool) -> None:
         self.falling = toggle
@@ -290,13 +295,18 @@ class Stone(Entity):
             frames: list[pygame.Surface] = [self.image.copy()]
 
             fall_distance = 0
-            while fall_distance < self.image.get_height():
-                self.image.scroll(0, 4)
+            while fall_distance < self.image.get_height() // 4:
+                fall_distance += 1
+                self.image.scroll(0, 1)
+                pygame.draw.rect(
+                    self.image,
+                    (0, 0, 0, 0),
+                    pygame.Rect(0, 0, self.image.get_width(), fall_distance),
+                )
                 frames.append(self.image.copy())
-                fall_distance += 4
 
             self.anims = Animation(frames, cd, False)
-            self.image.scroll(0, -64)
+            self.image.scroll(0, -self.image.get_height() // 4)
 
         self.anims.update()
         self.image = self.anims.current_frame

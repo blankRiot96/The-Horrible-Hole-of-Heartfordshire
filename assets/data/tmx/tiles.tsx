@@ -29,6 +29,12 @@
  <tile id="27" type="wall"/>
  <tile id="28" type="wall"/>
  <tile id="30" type="torch"/>
+ <tile id="36" type="hole"/>
+ <tile id="37" type="hole"/>
+ <tile id="38" type="hole"/>
+ <tile id="39" type="hole"/>
+ <tile id="40" type="hole"/>
+ <tile id="41" type="hole"/>
  <tile id="42" type="stone"/>
  <tile id="43" type="stone"/>
  <tile id="44" type="stone"/>
