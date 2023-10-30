@@ -3,6 +3,7 @@ from pathlib import Path
 import pygame
 import pytmx
 
+from .entities import Entity, Player
 from .enums import DoorDirection
 
 # Constants
@@ -30,6 +31,6 @@ dt: float
 mouse_pos: pygame.Vector2
 camera_pos: pygame.Vector2
 room_id: int = 1
-entities: list
-player: object
+entities: list[Entity]
+player: Player
 next_door = DoorDirection.SOUTH
