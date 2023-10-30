@@ -90,10 +90,12 @@ class Grid:
         foreground_entities: list[Entity] = []
 
         for entity in shared.entities:
-            if entity.movement_type in [MovementType.STATIC, MovementType.PUSHED]:
-                background_entities.append(entity)
-            if entity.movement_type == MovementType.FIXED:
+            if entity is shared.player:
+                continue
+            if entity.movement_type == MovementType.FOREGROUND:
                 foreground_entities.append(entity)
+            else:
+                background_entities.append(entity)
 
         return background_entities, foreground_entities
 

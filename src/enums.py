@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 
 class MovementType(Enum):
-    # FIXED -> foreground things that don't move
+    # FIXED -> movement path
     FIXED = auto()
     # STATIC -> background things that don't move
     STATIC = auto()
@@ -10,6 +10,8 @@ class MovementType(Enum):
     PUSHED = auto()
     # CONTROLLED -> player
     CONTROLLED = auto()
+    # FOREGROUND -> foreground things
+    FOREGROUND = auto()
 
 
 class DoorDirection(Enum):

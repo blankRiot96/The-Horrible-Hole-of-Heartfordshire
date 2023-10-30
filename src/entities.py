@@ -121,7 +121,7 @@ class Foreground(Entity):
         properties: dict,
     ) -> None:
         self.properties = properties
-        super().__init__(cell, MovementType.FIXED, image)
+        super().__init__(cell, MovementType.FOREGROUND, image)
 
 
 class Player(Entity):
