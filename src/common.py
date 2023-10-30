@@ -1,3 +1,4 @@
+import math
 import os
 import sys
 import time
@@ -12,6 +13,12 @@ def get_path(filename: str) -> str:
         return os.path.join(sys._MEIPASS, filename)  # type: ignore
     else:
         return filename
+
+
+def scale_add(img: pygame.Surface, term: float | int) -> pygame.Surface:
+    return pygame.transform.scale(
+        img, (img.get_width() + term, img.get_height() + term)
+    )
 
 
 def render_at(
@@ -47,3 +54,15 @@ class Time:
             self.start = time.perf_counter()
             return True
         return False
+
+
+class SinWave:
+    def __init__(self, speed):
+        self.speed = speed
+        self.radians = 0
+        self.val = 0
+
+    def update(self, dt: float):
+        self.radians += self.speed * dt
+        self.radians %= math.pi * 2
+        self.val = math.sin(self.radians)

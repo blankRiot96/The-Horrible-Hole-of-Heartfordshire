@@ -4,7 +4,6 @@ import pygame
 
 from . import shared
 from .gamestate import GameStateManager
-from .playstate import PlayState
 
 
 class Core:
@@ -13,6 +12,8 @@ class Core:
 
         shared.dt = 0.0
         shared.events = []
+
+        from .playstate import PlayState
 
         GameStateManager().add_state(PlayState)
         GameStateManager().set_state("PlayState")
