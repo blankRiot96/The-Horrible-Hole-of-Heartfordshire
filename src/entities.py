@@ -2,9 +2,10 @@ import pygame
 
 from . import shared
 from .anim import Animation, get_frames
+from .bloom import Bloom
 from .common import render_at
 from .enums import DoorDirection, MovementType
-from .gameobject import GameObject
+from .gameobject import GameObject, get_relative_pos
 from .gamestate import GameStateManager
 
 
@@ -14,7 +15,7 @@ class Entity(GameObject):
         self.movement_type = movement_type
 
         self.pos = self.cell * shared.TILE_SIDE
-        self.rect = image.get_rect(topleft=self.pos)
+        self.rect: pygame.Rect = image.get_rect(topleft=self.pos)
         self.desired_cell = self.cell.copy()
         self.desired_pos = self.pos.copy()
         self._direction = (0, 0)
@@ -31,6 +32,9 @@ class Entity(GameObject):
         self.desired_cell = self.cell + self.direction
         self.desired_pos = self.desired_cell * shared.TILE_SIDE
         self.moving = True
+
+    def get_cell_diff(self, other_cell):
+        return abs(self.cell[0] - other_cell[0]), abs(self.cell[1] - other_cell[1])
 
     def move(self):
         self.pos.move_towards_ip(self.desired_pos, shared.ENTITY_SPEED * shared.dt)
@@ -49,6 +53,8 @@ class Entity(GameObject):
 
 
 class Torch(Entity):
+    FRAMES = get_frames(shared.ART_PATH / "torch.png", (64, 64))
+
     def __init__(
         self,
         cell: tuple[int, int],
@@ -57,6 +63,53 @@ class Torch(Entity):
     ) -> None:
         self.properties = properties
         super().__init__(cell, MovementType.STATIC, image)
+
+        self.lit = False
+        self.near = False
+        self.clicked = False
+        self.original_image = self.image.copy()
+        self.anim = Animation(Torch.FRAMES, 0.3)
+        self.bloom = Bloom(
+            (500, 500),
+            0.6,
+            40,
+            layers=[(255, 255, 100)],
+        )
+
+    def check_clicked(self):
+        for event in shared.events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                relative_rect = self.rect.copy()
+                relative_rect.topleft = get_relative_pos(relative_rect.topleft)
+
+                if relative_rect.collidepoint(shared.mouse_pos):
+                    self.clicked = True
+
+    def check_near(self):
+        self.near = self.get_cell_diff(shared.player.cell) >= (0, 0)
+
+    def check_lit(self):
+        self.lit = self.near and self.clicked
+
+    def on_lit(self):
+        if self.lit:
+            self.anim.update()
+            self.bloom.update(self.rect.center)
+            self.image = self.anim.current_frame.copy()
+        else:
+            self.image = self.original_image.copy()
+
+    def update(self):
+        super().update()
+        self.check_near()
+        self.check_clicked()
+        self.check_lit()
+        self.on_lit()
+
+    def draw(self) -> None:
+        super().draw()
+        if self.lit:
+            self.bloom.draw()
 
 
 class Door(Entity):
@@ -127,6 +180,7 @@ class Player(Entity):
         shared.player = self
         self.direction = shared.next_door.value
         self.init_anim()
+        self.bloom = Bloom((300, 300), wave_speed=2, expansion_factor=35)
 
     def init_anim(self):
         frames = get_frames(shared.ART_PATH / "player-64.png", (32, 64))
@@ -199,8 +253,13 @@ class Player(Entity):
     def update(self):
         self.scan_controls()
         super().update()
+        self.bloom.update(self.rect.center)
         self.scan_surroundings()
         self.update_anim()
+
+    def draw(self) -> None:
+        super().draw()
+        self.bloom.draw()
 
 
 class Stone(Entity):

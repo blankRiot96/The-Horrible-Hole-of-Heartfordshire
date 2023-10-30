@@ -33,3 +33,4 @@ room_id: int = 1
 entities: list
 player: object
 next_door = DoorDirection.SOUTH
+overlay: pygame.Surface

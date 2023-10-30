@@ -21,6 +21,7 @@ class PlayState(GameState):
         self.grid.load_entities_from_room()
         shared.camera_pos = pygame.Vector2(shared.player.rect.center)
         self.cam_speed = shared.ENTITY_SPEED * 0.65
+        shared.overlay = pygame.Surface(shared.WIN_SIZE)
 
     def handle_events(self) -> None:
         ...
@@ -38,4 +39,6 @@ class PlayState(GameState):
         self.handle_camera()
 
     def draw(self):
+        shared.overlay.fill("black")
         self.grid.draw()
+        shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
