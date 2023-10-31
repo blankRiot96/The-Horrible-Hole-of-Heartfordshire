@@ -347,7 +347,10 @@ class Stone(Entity):
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.PUSHED
             ):
-                entity.direction = self.direction
+                if entity.request_direction(self.direction):
+                    entity.direction = self.direction
+                else:
+                    self.direction = (0, 0)
 
             if (
                 entity.cell == self.desired_cell
@@ -365,6 +368,8 @@ class Stone(Entity):
                     return False
                 elif entity.movement_type == MovementType.STATIC:
                     return False
+                elif entity.movement_type == MovementType.PUSHED:
+                    return entity.request_direction(new_direction)
 
         return True
 
