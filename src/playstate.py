@@ -4,7 +4,6 @@ import pytmx
 
 from . import shared
 from .gamestate import GameState
-from .glitch import Glitch
 from .grid import Grid
 
 
@@ -24,7 +23,6 @@ class PlayState(GameState):
         shared.camera_pos = pygame.Vector2(shared.player.rect.center)
         self.cam_speed = shared.ENTITY_SPEED * 0.65
         shared.overlay = pygame.Surface(shared.WIN_SIZE)
-        self.glitch = Glitch()
 
     def handle_events(self) -> None:
         ...
@@ -40,10 +38,8 @@ class PlayState(GameState):
     def update(self) -> None:
         self.grid.update()
         self.handle_camera()
-        self.glitch.update()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
-        self.glitch.draw()
