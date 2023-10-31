@@ -7,6 +7,6 @@ to be good for my long-term health...
 WASD or Arrow Keys to move
 Mouse left click to light torches
 
-(Press any key to start)
 (There are no respawns)
 (Good Luck!)
+(Press any key to start)
