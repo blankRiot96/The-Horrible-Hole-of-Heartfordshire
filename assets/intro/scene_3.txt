@@ -1,0 +1,12 @@
+Wait.... what's that sound?
+
+I need to figure out how to get out of here.
+I have a feeling that staying here is not going
+to be good for my long-term health...
+
+WASD or Arrow Keys to move
+Mouse left click to light torches
+
+(Press any key to start)
+(There are no respawns)
+(Good Luck!)
