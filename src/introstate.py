@@ -6,6 +6,7 @@ from . import shared
 from .asset_loader import Loader
 from .common import Time, get_path
 from .gamestate import GameState, GameStateManager
+from .glitch import Glitch
 
 
 class IntroState(GameState):
@@ -19,6 +20,7 @@ class IntroState(GameState):
         self.character_delay = 0.1  # seconds
         self.character_timer = Time(self.character_delay)
         self.ready_to_continue = False
+        self.glitch = Glitch()
 
     def load_scenes(self) -> None:
         scene_files = glob(get_path("assets/intro/*.txt"))
@@ -62,6 +64,7 @@ class IntroState(GameState):
             self.character_delay = 0.1
         self.character_timer.time_to_pass = self.character_delay
         self.increment_character()
+        self.glitch.update()
 
     def draw(self) -> None:
         text = self.scenes[self.current_scene][0][: self.character_index]
@@ -70,3 +73,4 @@ class IntroState(GameState):
         )
 
         shared.screen.blit(rendered, (0, 0))
+        self.glitch.draw()
