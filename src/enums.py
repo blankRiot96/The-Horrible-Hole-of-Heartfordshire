@@ -14,6 +14,8 @@ class MovementType(Enum):
     FOREGROUND = auto()
     # HOLE -> holes. player can't walk over, but stones can be pushed over
     HOLE = auto()
+    # PATHING -> can pathfind
+    PATHING = auto()
 
 
 class DoorDirection(Enum):

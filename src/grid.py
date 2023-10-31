@@ -1,7 +1,18 @@
 import pygame
 
 from . import shared
-from .entities import Door, Entity, Foreground, Hole, Pillar, Player, Stone, Torch, Wall
+from .entities import (
+    Door,
+    Entity,
+    Foreground,
+    Hole,
+    Monster,
+    Pillar,
+    Player,
+    Stone,
+    Torch,
+    Wall,
+)
 from .enums import MovementType
 from .gameobject import get_relative_pos
 
@@ -18,6 +29,7 @@ class Grid:
         "pillar": Pillar,
         "foreground": Foreground,
         "hole": Hole,
+        "monster": Monster,
     }
 
     def __init__(self) -> None:

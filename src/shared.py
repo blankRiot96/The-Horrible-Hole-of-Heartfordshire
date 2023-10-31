@@ -10,7 +10,7 @@ import pytmx
 from .enums import DoorDirection
 
 if typing.TYPE_CHECKING:
-    from .entities import Entity, Player
+    from .entities import Entity, Monster, Player
 
 # Constants
 ASSETS_PATH = Path("assets/")
@@ -37,7 +37,10 @@ dt: float
 mouse_pos: pygame.Vector2
 camera_pos: pygame.Vector2
 room_id: int = 1
+monster_room: int = 9
+monster_move_chance: float = 0.05
 entities: list[Entity]
 player: Player
+monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
