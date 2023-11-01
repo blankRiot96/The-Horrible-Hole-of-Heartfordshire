@@ -41,4 +41,4 @@ class PlayState(GameState):
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
-        # shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+        shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
