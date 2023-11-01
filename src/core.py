@@ -19,6 +19,7 @@ class Core:
 
         GameStateManager().add_state(PlayState)
         GameStateManager().add_state(IntroState)
+        GameStateManager().add_state(MainMenu)
         GameStateManager().set_state("IntroState")
 
     def win_init(self) -> None:

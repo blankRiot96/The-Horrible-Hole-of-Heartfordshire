@@ -55,7 +55,7 @@ class IntroState(GameState):
                     if not self.is_last_scene():
                         self.move_to_next_scene()
                     else:
-                        GameStateManager().set_state("PlayState")
+                        GameStateManager().set_state("MainMenu")
 
     def update(self) -> None:
         if shared.keys[pygame.K_SPACE]:
