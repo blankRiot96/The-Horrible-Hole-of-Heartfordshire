@@ -44,3 +44,4 @@ player: Player
 monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
+game_name: str = "Title"
