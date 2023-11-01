@@ -14,17 +14,19 @@ class Core:
         shared.events = []
 
         from .introstate import IntroState
+        from .mainmenu import MainMenu
         from .playstate import PlayState
 
         GameStateManager().add_state(PlayState)
         GameStateManager().add_state(IntroState)
+        GameStateManager().add_state(MainMenu)
         GameStateManager().set_state("IntroState")
 
     def win_init(self) -> None:
         pygame.init()
         shared.screen = pygame.display.set_mode(shared.WIN_SIZE)
         shared.clock = pygame.time.Clock()
-        pygame.display.set_caption("Title")
+        pygame.display.set_caption(shared.game_name)
 
     def update(self) -> None:
         shared.events = pygame.event.get()
