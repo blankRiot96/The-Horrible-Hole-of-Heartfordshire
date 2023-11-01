@@ -252,6 +252,12 @@ class Player(Entity):
             return
         self.last_direction = self.direction
 
+    def travel_to_next_room(self, entity: Entity):
+        shared.entities_in_room[shared.room_id] = shared.entities.copy()
+        shared.room_id += entity.room_delta
+        shared.next_door = entity.next_door
+        GameStateManager().set_state("PlayState")
+
     def scan_surroundings(self) -> None:
         for entity in shared.entities:
             if entity.cell == self.cell:
@@ -271,10 +277,7 @@ class Player(Entity):
                 and entity.movement_type == MovementType.STATIC
             ):
                 if isinstance(entity, Door):
-                    shared.room_id += entity.room_delta
-                    shared.next_door = entity.next_door
-                    GameStateManager().set_state("PlayState")
-
+                    self.travel_to_next_room(entity)
                 self.direction = (0, 0)
             if (
                 entity.cell == self.desired_cell
