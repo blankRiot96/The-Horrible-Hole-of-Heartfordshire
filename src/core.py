@@ -13,12 +13,13 @@ class Core:
         shared.dt = 0.0
         shared.events = []
 
+        from .introstate import IntroState
         from .mainmenu import MainMenu
         from .playstate import PlayState
 
         GameStateManager().add_state(PlayState)
-        GameStateManager().add_state(MainMenu)
-        GameStateManager().set_state("MainMenu")
+        GameStateManager().add_state(IntroState)
+        GameStateManager().set_state("IntroState")
 
     def win_init(self) -> None:
         pygame.init()

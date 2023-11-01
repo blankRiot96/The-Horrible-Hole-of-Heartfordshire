@@ -3,7 +3,6 @@ import pygame
 import pytmx
 
 from . import shared
-from .entities import Stone
 from .gamestate import GameState
 from .grid import Grid
 
