@@ -427,6 +427,7 @@ class Monster(Entity):
     def __init__(
         self, cell: tuple[int, int], image: pygame.Surface, properties: dict
     ) -> None:
+        print("Monster created")
         self.properties = properties
         super().__init__(cell, MovementType.PATHING, image)
         self.init_anim()
