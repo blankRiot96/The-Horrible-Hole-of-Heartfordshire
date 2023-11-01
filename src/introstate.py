@@ -15,11 +15,8 @@ class IntroState(GameState):
         self.font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 30)
         self.scenes: dict[int, tuple[str, int]] = {}
         self.load_scenes()
-        self.current_scene = 1
-        self.character_index = 0
-        self.character_delay = 0.1  # seconds
+        self.reset()
         self.character_timer = Time(self.character_delay)
-        self.ready_to_continue = False
         self.glitch = Glitch()
 
     def load_scenes(self) -> None:
@@ -38,6 +35,7 @@ class IntroState(GameState):
         self.ready_to_continue = False
         self.current_scene += 1
         self.character_index = 0
+        self.ready_to_continue = False
 
     def increment_character(self) -> None:
         if self.character_index < len(self.scenes[self.current_scene][0]):
@@ -48,9 +46,18 @@ class IntroState(GameState):
         else:
             self.ready_to_continue = True
 
+    def reset(self) -> None:
+        self.current_scene = 1
+        self.character_index = 0
+        self.character_delay = 0.1  # seconds
+        self.ready_to_continue = False
+
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_t:
+                    self.reset()
+                    GameStateManager().set_state("MainMenu")
                 if self.ready_to_continue:
                     if not self.is_last_scene():
                         self.move_to_next_scene()

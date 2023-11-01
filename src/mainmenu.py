@@ -19,7 +19,17 @@ class MainMenu(GameState):
                 "red",
                 "blue",
                 "green",
-            )
+            ),
+            Button(
+                pygame.Vector2(shared.screen.get_rect().center)
+                + pygame.Vector2(0, 100),
+                lambda: GameStateManager().set_state("IntroState"),
+                self.font,
+                "Replay Intro",
+                "blue",
+                "red",
+                "green",
+            ),
         ]
         self.title = self.font.render(shared.game_name, True, "White")
 
