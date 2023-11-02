@@ -136,3 +136,6 @@ dmypy.json
 .idea/
 
 output/
+
+# profiling results
+*.prof

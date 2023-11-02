@@ -43,3 +43,4 @@ next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
 game_name: str = "Title"
 entities_in_room: dict[int, list[Entity]] = {}
+reset: bool = False
