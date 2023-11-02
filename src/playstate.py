@@ -24,10 +24,13 @@ class PlayState(GameState):
         shared.overlay = pygame.Surface(shared.WIN_SIZE)
 
     def handle_events(self) -> None:
-        for event in shared.events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    GameStateManager().set_state("DeathScreen")
+        # this is purely for testing purposes
+        # for event in shared.events:
+        #     if event.type == pygame.KEYDOWN:
+        #         if event.key == pygame.K_ESCAPE:
+        #             GameStateManager().set_state("DeathScreen")
+
+        pass
 
     def handle_camera(self) -> None:
         shared.camera_pos.move_towards_ip(
