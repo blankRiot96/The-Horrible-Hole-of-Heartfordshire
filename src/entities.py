@@ -254,6 +254,11 @@ class Player(Entity):
             return
         self.last_direction = self.direction
 
+    def travel_to_next_room(self, entity: Entity):
+        shared.room_id += entity.room_delta
+        shared.next_door = entity.next_door
+        GameStateManager().set_state("PlayState")
+
     def scan_surroundings(self) -> None:
         for entity in shared.entities:
             if entity.cell == self.cell:
@@ -273,9 +278,7 @@ class Player(Entity):
                 and entity.movement_type == MovementType.STATIC
             ):
                 if isinstance(entity, Door):
-                    shared.room_id += entity.room_delta
-                    shared.next_door = entity.next_door
-                    GameStateManager().set_state("PlayState")
+                    self.travel_to_next_room(entity)
 
                 self.direction = (0, 0)
             if (
@@ -421,53 +424,3 @@ class Hole(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.HOLE, image)
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
-
-
-class Monster(Entity):
-    def __init__(
-        self, cell: tuple[int, int], image: pygame.Surface, properties: dict
-    ) -> None:
-        print("Monster created")
-        self.properties = properties
-        super().__init__(cell, MovementType.PATHING, image)
-        self.init_anim()
-        self.direction = (0, -1)
-
-    def init_anim(self) -> None:
-        frames = get_frames(shared.ART_PATH / "monster-64.png", (64, 64))
-
-        for index, frame in enumerate(frames):
-            base = pygame.Surface((shared.TILE_SIDE, shared.TILE_SIDE), pygame.SRCALPHA)
-            render_at(base, frame, "center")
-            frames[index] = base
-
-        number_frames = 7
-        south_frames = frames[:number_frames]
-        south_frames += south_frames[-2:0:-1]
-        east_frames = frames[number_frames : 2 * number_frames]
-        east_frames += east_frames[-2:0:-1]
-        west_frames = [
-            pygame.transform.flip(frame, True, False) for frame in east_frames
-        ]
-        north_frames = frames[8:12]
-        anim_cd = 0.2
-        self.anims = {
-            (0, -1): Animation(north_frames, anim_cd),
-            (1, 0): Animation(east_frames, anim_cd),
-            (-1, 0): Animation(west_frames, anim_cd),
-            (0, 1): Animation(south_frames, anim_cd),
-        }
-        self.last_direction = (0, 1)
-
-    def update_anim(self) -> None:
-        if self.direction == (0, 0):
-            self.image = self.anims[self.last_direction].indexable_frames[0]
-            return
-        self.anims[self.direction].update()
-        self.image = self.anims[self.direction].current_frame
-
-    def update(self) -> None:
-        super().update()
-        if shared.room_id == shared.monster_room:
-            self.update_anim()
-            # self.pathfind_to_player()
