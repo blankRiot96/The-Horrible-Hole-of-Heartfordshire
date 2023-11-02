@@ -1,7 +1,7 @@
 import pygame
 
 from . import shared
-from .entities import Door, Hole, MagicHole
+from .entities import Door, Hole, MagicHole, Torch
 from .enums import DoorDirection
 from .gameobject import get_relative_pos
 
@@ -45,6 +45,7 @@ class PuzzleManager:
         self.room_solve_checkers = {
             1: self.check_stone_hole_solved,
             2: self.check_magic_solved,
+            4: self.check_combination_lock_solved,
         }
         self.place_locks()
 
@@ -79,6 +80,24 @@ class PuzzleManager:
 
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
         self.on_solve()
+
+    def check_combination_lock_solved(self):
+        """
+        The riddle goes like this:
+        'This creature dwelves in the sea.. it has stretchy arms and its name starts
+        with the word in room 8.. light the first and nth torch where n is the number
+        of arms this sea creature has.'
+
+        So basically check if the first and 8th torch are lit
+        """
+        torches = [entity for entity in shared.entities if isinstance(entity, Torch)]
+
+        if torches[0].lit and torches[7].lit:
+            PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
+            self.on_solve()
+            return
+
+        PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
 
     def update(self):
         if not shared.check_solve:

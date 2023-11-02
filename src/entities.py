@@ -242,6 +242,8 @@ class Torch(Entity):
 
                 if relative_rect.collidepoint(shared.mouse_pos):
                     self.clicked = True
+                    if self.near:
+                        shared.check_solve = True
 
     def check_near(self):
         self.near = self.get_cell_diff(shared.player.cell) >= (0, 0)

@@ -3,6 +3,7 @@ import pygame
 import pytmx
 
 from . import shared
+from .combination_lock import CombinationLock
 from .gamestate import GameState, GameStateManager
 from .grid import Grid
 from .puzzle_manager import PuzzleManager
@@ -24,6 +25,7 @@ class PlayState(GameState):
         self.cam_speed = shared.ENTITY_SPEED * 0.65
         shared.overlay = pygame.Surface(shared.WIN_SIZE)
         self.puzzle_manager = PuzzleManager()
+        self.comb_lock = CombinationLock()
 
     def handle_events(self) -> None:
         for event in shared.events:
@@ -46,9 +48,11 @@ class PlayState(GameState):
         self.grid.update()
         self.handle_camera()
         self.puzzle_manager.update()
+        self.comb_lock.update()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
         self.puzzle_manager.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+        self.comb_lock.draw()
