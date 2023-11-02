@@ -466,7 +466,7 @@ class Stone(Entity):
         properties: dict,
     ) -> None:
         self.properties = properties
-        super().__init__(cell, MovementType.PUSHED, image)
+        super().__init__(cell, MovementType.PUSHED, image.copy())
         self.falling = False
         self.anims = None
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
@@ -478,12 +478,18 @@ class Stone(Entity):
 
         for entity in shared.entities:
             if entity.cell == self.desired_cell:
-                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol != entity.symbol
+                ):
                     self.direction = (0, 0)
                     return
 
             if entity.cell == self.cell:
-                if isinstance(entity, Hole) and self.symbol == entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol == entity.symbol
+                ):
                     self.falling = True
                 else:
                     continue
@@ -509,7 +515,10 @@ class Stone(Entity):
 
         for entity in shared.entities:
             if entity.cell == desired_cell:
-                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol != entity.symbol
+                ):
                     return False
                 elif entity.movement_type == MovementType.STATIC:
                     return False
@@ -526,7 +535,14 @@ class Stone(Entity):
                 self.animate_fall()
             except StopIteration:
                 self.falling = False
-                self.movement_type = MovementType.STATIC
+                self.movement_type = MovementType.WALKABLE
+                for entity in shared.entities:
+                    if (
+                        entity.rect.colliderect(self.rect)
+                        and entity.movement_type == MovementType.HOLE
+                    ):
+                        entity.movement_type = MovementType.WALKABLE
+                        entity.filled = True
 
     def set_falling(self, toggle: bool) -> None:
         self.falling = toggle
@@ -564,3 +580,4 @@ class Hole(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.HOLE, image)
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
+        self.filled = False
