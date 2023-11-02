@@ -1,7 +1,19 @@
 import pygame
 
 from . import shared
-from .entities import Door, Entity, Foreground, Hole, Pillar, Player, Stone, Torch, Wall
+from .entities import (
+    Door,
+    Entity,
+    Foreground,
+    Hole,
+    MagicBlock,
+    MagicHole,
+    Pillar,
+    Player,
+    Stone,
+    Torch,
+    Wall,
+)
 from .enums import MovementType
 from .gameobject import get_relative_pos
 
@@ -18,6 +30,8 @@ class Grid:
         "pillar": Pillar,
         "foreground": Foreground,
         "hole": Hole,
+        "magic-block": MagicBlock,
+        "magic-hole": MagicHole,
     }
 
     def __init__(self) -> None:
@@ -107,6 +121,7 @@ class Grid:
 
             # this just forces holes to be the first things drawn
             background_entities.sort(key=lambda e: int(not isinstance(e, Hole)))
+            background_entities.sort(key=lambda e: int(not isinstance(e, MagicHole)))
 
         return background_entities, foreground_entities
 
