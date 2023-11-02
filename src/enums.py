@@ -14,6 +14,8 @@ class MovementType(Enum):
     FOREGROUND = auto()
     # HOLE -> holes. player can't walk over, but stones can be pushed over
     HOLE = auto()
+    # WALKABLE -> things that can be moved over and don't fit the other categories
+    WALKABLE = auto()
 
 
 class DoorDirection(Enum):

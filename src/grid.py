@@ -121,7 +121,12 @@ class Grid:
                 background_entities.append(entity)
 
             # this just forces holes to be the first things drawn
-            background_entities.sort(key=lambda e: int(not isinstance(e, Hole)))
+            background_entities.sort(
+                key=lambda e: (
+                    int(not isinstance(e, Hole)),
+                    int(e.movement_type != MovementType.WALKABLE),
+                )
+            )
 
         return background_entities, foreground_entities
 
