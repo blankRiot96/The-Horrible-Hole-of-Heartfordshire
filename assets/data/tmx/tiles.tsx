@@ -54,7 +54,6 @@
    <property name="symbol" value="ireland"/>
   </properties>
  </tile>
- <tile id="41" type="hole"/>
  <tile id="42" type="stone">
   <properties>
    <property name="symbol" value="teacup"/>
@@ -80,7 +79,6 @@
    <property name="symbol" value="ireland"/>
   </properties>
  </tile>
- <tile id="47" type="stone"/>
  <tile id="48" type="wall"/>
  <tile id="49" type="wall"/>
  <tile id="50" type="wall"/>
