@@ -72,6 +72,7 @@ class MagicHole(Entity):
         super().__init__(cell, MovementType.HOLE, image.copy())
 
         self.character = properties["character"]
+        self.filled = False
 
 
 class MagicBlock(Entity):
@@ -129,6 +130,7 @@ class MagicBlock(Entity):
 
             if entity.cell == self.cell:
                 if isinstance(entity, MagicHole) and self.character == entity.character:
+                    shared.check_solve = True
                     self.falling = True
                 else:
                     continue
@@ -172,6 +174,15 @@ class MagicBlock(Entity):
             except StopIteration:
                 self.falling = False
                 self.movement_type = MovementType.STATIC
+
+                for entity in shared.entities:
+                    if (
+                        entity.rect.colliderect(self.rect)
+                        and entity.movement_type == MovementType.HOLE
+                    ):
+                        entity.movement_type = MovementType.WALKABLE
+                        entity.filled = True
+                shared.check_solve = True
 
     def set_falling(self, toggle: bool) -> None:
         self.falling = toggle
@@ -291,6 +302,10 @@ class Door(Entity):
             self.door_direction = DoorDirection.SOUTH
             self.room_delta = 3
         self.next_door = Door.DOOR_CONNECTION.get(self.door_direction)
+        if shared.room_id == 1:
+            self.locked = True
+        else:
+            self.locked = self.door_direction != shared.next_door
 
 
 class Wall(Entity):
@@ -418,7 +433,7 @@ class Player(Entity):
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.STATIC
             ):
-                if isinstance(entity, Door):
+                if isinstance(entity, Door) and not entity.locked:
                     self.travel_to_next_room(entity)
                 self.direction = (0, 0)
             if (
@@ -490,6 +505,7 @@ class Stone(Entity):
                     entity.movement_type == MovementType.HOLE
                     and self.symbol == entity.symbol
                 ):
+                    shared.check_solve = True
                     self.falling = True
                 else:
                     continue
@@ -543,6 +559,7 @@ class Stone(Entity):
                     ):
                         entity.movement_type = MovementType.WALKABLE
                         entity.filled = True
+                shared.check_solve = True
 
     def set_falling(self, toggle: bool) -> None:
         self.falling = toggle

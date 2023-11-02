@@ -5,6 +5,7 @@ import pytmx
 from . import shared
 from .gamestate import GameState, GameStateManager
 from .grid import Grid
+from .puzzle_manager import PuzzleManager
 
 
 def load_room():
@@ -22,6 +23,7 @@ class PlayState(GameState):
         shared.camera_pos = pygame.Vector2(shared.player.rect.center)
         self.cam_speed = shared.ENTITY_SPEED * 0.65
         shared.overlay = pygame.Surface(shared.WIN_SIZE)
+        self.puzzle_manager = PuzzleManager()
 
     def handle_events(self) -> None:
         for event in shared.events:
@@ -43,8 +45,10 @@ class PlayState(GameState):
     def update(self) -> None:
         self.grid.update()
         self.handle_camera()
+        self.puzzle_manager.update()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
+        self.puzzle_manager.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
