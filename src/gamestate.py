@@ -35,6 +35,10 @@ class GameStateManager:
             self.state: GameState | None = None
             GameStateManager.__initialized = True
 
+    def reset(self) -> None:
+        GameStateManager.__initialized = False
+        GameStateManager.__instance = None
+
     def add_state(self, state: type) -> None:
         self.states[state.__name__] = state
 
@@ -52,3 +56,6 @@ class GameStateManager:
     def handle_events(self) -> None:
         if self.state is not None:
             self.state.handle_events()
+
+    def print_states(self) -> None:
+        print(self.states)

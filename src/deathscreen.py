@@ -6,21 +6,21 @@ from .button import Button
 from .gamestate import GameState, GameStateManager
 
 
-def set_reset_flag() -> None:
+def set_reset_flag():
     shared.reset = True
 
 
-class MainMenu(GameState):
+class DeathScreen(GameState):
     def __init__(self) -> None:
-        super().__init__("MainMenu")
-        self.font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 60)
+        super().__init__("DeathScreen")
+        self.button_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 60)
+        self.death_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 120)
         self.buttons = [
             Button(
                 pygame.Vector2(shared.screen.get_rect().center),
-                # lambda: GameStateManager().set_state("PlayState"),
                 set_reset_flag,
-                self.font,
-                "Start Game",
+                self.button_font,
+                "New Game",
                 "red",
                 "blue",
                 "green",
@@ -28,15 +28,15 @@ class MainMenu(GameState):
             Button(
                 pygame.Vector2(shared.screen.get_rect().center)
                 + pygame.Vector2(0, 100),
-                lambda: GameStateManager().set_state("IntroState"),
-                self.font,
-                "Replay Intro",
+                lambda: GameStateManager().set_state("MainMenu"),
+                self.button_font,
+                "Main Menu",
                 "blue",
                 "red",
                 "green",
             ),
         ]
-        self.title = self.font.render(shared.game_name, True, "White")
+        self.death_message = self.death_font.render("You have died!", True, "Red")
 
     def handle_events(self) -> None:
         for event in shared.events:
@@ -51,7 +51,8 @@ class MainMenu(GameState):
 
     def draw(self) -> None:
         shared.screen.blit(
-            self.title, self.title.get_rect(midtop=shared.screen.get_rect().midtop)
+            self.death_message,
+            self.death_message.get_rect(midtop=shared.screen.get_rect().midtop),
         )
         for button in self.buttons:
             button.draw()
