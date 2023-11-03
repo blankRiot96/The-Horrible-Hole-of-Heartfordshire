@@ -3,6 +3,7 @@ import pygame
 from . import shared
 from .asset_loader import Loader
 from .button import Button
+from .common import get_path
 from .gamestate import GameState, GameStateManager
 
 
@@ -11,6 +12,8 @@ def set_reset_flag():
 
 
 class DeathScreen(GameState):
+    death_audio: pygame.mixer.Sound | None = None
+
     def __init__(self) -> None:
         super().__init__("DeathScreen")
         self.button_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 60)
@@ -37,6 +40,17 @@ class DeathScreen(GameState):
             ),
         ]
         self.death_message = self.death_font.render("You have died!", True, "Red")
+        if shared.game_audio is not None and shared.game_audio.get_num_channels():
+            shared.game_audio.stop()
+        if shared.monster_audio is not None and shared.monster_audio.get_num_channels():
+            shared.monster_audio.stop()
+        if DeathScreen.death_audio is None:
+            DeathScreen.death_audio = Loader().get_sound(
+                get_path("assets/audio/hhhjumpscare.ogg")
+            )
+        if DeathScreen.death_audio.get_num_channels():
+            DeathScreen.death_audio.stop()
+        DeathScreen.death_audio.play()
 
     def handle_events(self) -> None:
         for event in shared.events:

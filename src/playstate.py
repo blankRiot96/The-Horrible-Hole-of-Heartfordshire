@@ -3,7 +3,9 @@ import pygame
 import pytmx
 
 from . import shared
+from .asset_loader import Loader
 from .combination_lock import CombinationLock
+from .common import get_path
 from .gamestate import GameState, GameStateManager
 from .grid import Grid
 from .monster_manager import MonsterManager
@@ -29,13 +31,19 @@ class PlayState(GameState):
         self.puzzle_manager = PuzzleManager()
         self.comb_lock = CombinationLock()
         shared.update_graph = True
+        if shared.game_audio is None:
+            shared.game_audio = Loader().get_sound(
+                get_path("assets/audio/hhhdungeon.ogg")
+            )
+        if not shared.game_audio.get_num_channels():
+            shared.game_audio.play(-1, 0, 10_000)
 
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.KEYDOWN:
                 #  this is purely for testing purposes
-                # if event.key == pygame.K_ESCAPE:
-                #     GameStateManager().set_state("DeathScreen")
+                if event.key == pygame.K_ESCAPE:
+                    GameStateManager().set_state("DeathScreen")
                 if event.key == pygame.K_r:
                     GameStateManager().set_state("PlayState")
 
@@ -47,7 +55,16 @@ class PlayState(GameState):
             shared.camera_pos.distance_to(shared.player.rect.center) / 75
         )
 
+    def stop_monster_audio_if_not_chasing(self) -> None:
+        if (
+            not shared.monster.chasing
+            and shared.monster_audio is not None
+            and shared.monster_audio.get_num_channels()
+        ):
+            shared.monster_audio.stop()
+
     def update(self) -> None:
+        self.stop_monster_audio_if_not_chasing()
         self.grid.update()
         self.handle_camera()
         # self.monster_manager.update()
