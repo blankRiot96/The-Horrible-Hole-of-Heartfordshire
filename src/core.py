@@ -18,11 +18,13 @@ class Core:
         from .introstate import IntroState
         from .mainmenu import MainMenu
         from .playstate import PlayState
+        from .victoryscreen import VictoryScreen
 
         GameStateManager().add_state(PlayState)
         GameStateManager().add_state(IntroState)
         GameStateManager().add_state(MainMenu)
         GameStateManager().add_state(DeathScreen)
+        GameStateManager().add_state(VictoryScreen)
 
         GameStateManager().set_state("IntroState")
 
