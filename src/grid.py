@@ -59,8 +59,10 @@ class Grid:
                     break
         self.align_player_pos()
 
-    def add_entity(self, entity) -> None:
+    def add_entity(self, entity: Entity) -> None:
         shared.entities.append(entity)
+        if entity.movement_type == MovementType.PATHING:
+            entity.pos = pygame.Vector2(-100, -100)
 
     def remove_unused_entities(self) -> None:
         all_entities = shared.entities
@@ -142,7 +144,6 @@ class Grid:
                 )
             )
             background_entities.sort(key=lambda e: int(not isinstance(e, MagicHole)))
-
 
         return background_entities, foreground_entities
 

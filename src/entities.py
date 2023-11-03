@@ -43,6 +43,8 @@ class Entity(GameObject):
         return abs(self.cell[0] - other_cell[0]), abs(self.cell[1] - other_cell[1])
 
     def move(self) -> None:
+        if self.desired_pos != self.pos:
+            shared.update_graph = True
         self.pos.move_towards_ip(self.desired_pos, shared.ENTITY_SPEED * shared.dt)
         self.rect.topleft = self.pos
 

@@ -55,6 +55,9 @@ class Time:
             return True
         return False
 
+    def get_time_left(self) -> float:
+        return self.time_to_pass - (time.perf_counter() - self.start)
+
 
 class SinWave:
     def __init__(self, speed):

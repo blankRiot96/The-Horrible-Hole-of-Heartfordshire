@@ -11,6 +11,8 @@ from .enums import DoorDirection
 
 if typing.TYPE_CHECKING:
     from .entities import Entity, Player
+    from .graph import Graph
+    from .monster_manager import Monster
 
 # Constants
 ASSETS_PATH = Path("assets/")
@@ -39,9 +41,12 @@ camera_pos: pygame.Vector2
 room_id: int = 1
 entities: list[Entity]
 player: Player
+monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
 game_name: str = "Title"
 entities_in_room: dict[int, list[Entity]] = {}
 reset: bool = False
 check_solve: bool = False
+graph: Graph
+update_graph: bool = True

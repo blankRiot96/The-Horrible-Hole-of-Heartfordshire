@@ -30,10 +30,10 @@ class Core:
         shared.room_id = 1
         shared.entities_in_room = {}
         shared.next_door = DoorDirection.SOUTH
+        shared.update_graph = True
         if hasattr(shared, "overlay"):
-            del shared.overlay
-            del shared.entities
             del shared.player
+            del shared.monster
         GameStateManager().reset()
         self.__init__()
         GameStateManager().set_state("PlayState")
