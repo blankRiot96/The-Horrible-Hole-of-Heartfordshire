@@ -4,7 +4,8 @@ import pygame
 
 from . import shared
 from .anim import Animation, get_frames
-from .common import Time, render_at
+from .asset_loader import Loader
+from .common import Time, get_path, render_at
 from .entities import Door
 from .enums import DoorDirection
 from .gameobject import GameObject
@@ -22,6 +23,10 @@ class Monster(GameObject):
             image=pygame.Surface(shared.TILE_SIZE),
         )
         self.chasing = False
+        if shared.monster_audio is None:
+            shared.monster_audio = Loader().get_sound(
+                get_path("assets/audio/hhhcreeps.ogg")
+            )
 
     def init_anim(self) -> None:
         frames = get_frames(shared.ART_PATH / "monster-64.png", (64, 64))
@@ -71,6 +76,11 @@ class Monster(GameObject):
         actual pathfinding you can use `shared.entities` which contain the absolute pos
         as `Entity.pos` and their rect as `Entity.rect` which you may require.
         """
+        if (
+            shared.monster_audio is not None
+            and not shared.monster_audio.get_num_channels()
+        ):
+            shared.monster_audio.play(-1)
         self.chasing = True
 
         if shared.update_graph:

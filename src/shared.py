@@ -51,3 +51,6 @@ reset: bool = False
 check_solve: bool = False
 graph: Graph
 update_graph: bool = True
+menu_audio: pygame.mixer.Sound | None = None
+game_audio: pygame.mixer.Sound | None = None
+monster_audio: pygame.mixer.Sound | None = None

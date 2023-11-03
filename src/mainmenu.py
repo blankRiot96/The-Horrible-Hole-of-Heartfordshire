@@ -10,6 +10,16 @@ def set_reset_flag() -> None:
     shared.reset = True
 
 
+def start_game() -> None:
+    set_reset_flag()
+    if shared.menu_audio is not None:
+        shared.menu_audio.stop()
+
+
+def quit() -> None:
+    raise SystemExit
+
+
 class MainMenu(GameState):
     def __init__(self) -> None:
         super().__init__("MainMenu")
@@ -17,8 +27,7 @@ class MainMenu(GameState):
         self.buttons = [
             Button(
                 pygame.Vector2(shared.screen.get_rect().center),
-                # lambda: GameStateManager().set_state("PlayState"),
-                set_reset_flag,
+                start_game,
                 self.font,
                 "Start Game",
                 "red",
@@ -35,8 +44,20 @@ class MainMenu(GameState):
                 "red",
                 "green",
             ),
+            Button(
+                pygame.Vector2(shared.screen.get_rect().center)
+                + pygame.Vector2(0, 200),
+                quit,
+                self.font,
+                "Quit",
+                "green",
+                "blue",
+                "red",
+            ),
         ]
         self.title = self.font.render(shared.game_name, True, "White")
+        if shared.menu_audio is not None and not shared.menu_audio.get_num_channels():
+            shared.menu_audio.play(-1)
 
     def handle_events(self) -> None:
         for event in shared.events:

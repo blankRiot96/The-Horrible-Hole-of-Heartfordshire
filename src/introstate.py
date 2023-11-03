@@ -30,12 +30,21 @@ class IntroState(GameState):
     def is_last_scene(self) -> bool:
         return self.current_scene == max(self.scenes.keys())
 
+    def start_music(self) -> None:
+        if shared.menu_audio is None or not shared.menu_audio.get_num_channels():
+            shared.menu_audio = Loader().get_sound(
+                get_path("assets/audio/hhhmenumotif.ogg")
+            )
+            shared.menu_audio.play(-1)
+
     def move_to_next_scene(self) -> None:
         self.character_timer.reset()
         self.ready_to_continue = False
         self.current_scene += 1
         self.character_index = 0
         self.ready_to_continue = False
+        if self.current_scene >= 2 and shared.menu_audio is None:
+            self.start_music()
 
     def increment_character(self) -> None:
         if self.character_index < len(self.scenes[self.current_scene][0]):
@@ -57,6 +66,7 @@ class IntroState(GameState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
                     self.reset()
+                    self.start_music()
                     GameStateManager().set_state("MainMenu")
                 if self.ready_to_continue:
                     if not self.is_last_scene():
