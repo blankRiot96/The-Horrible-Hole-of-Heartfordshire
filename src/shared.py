@@ -10,7 +10,8 @@ import pytmx
 from .enums import DoorDirection
 
 if typing.TYPE_CHECKING:
-    from .entities import Entity, Monster, Player
+    from .entities import Entity, Player
+    from .monster_manager import Monster
 
 # Constants
 ASSETS_PATH = Path("assets/")
@@ -37,13 +38,9 @@ dt: float
 mouse_pos: pygame.Vector2
 camera_pos: pygame.Vector2
 room_id: int = 1
-monster_room: int = 9
-monster_last_room: int = -1
-monster_move_chance: float = 1  # 5% chance
-monster_move_time: int = 1  # every x seconds
 entities: list[Entity]
 player: Player
-monster: Monster | None = None
+monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
 game_name: str = "Title"
