@@ -163,6 +163,8 @@ class MagicBlock(Entity):
                 elif entity.movement_type == MovementType.STATIC:
                     return False
                 elif entity.movement_type == MovementType.PUSHED:
+                    if entity.falling:
+                        return False
                     return entity.request_direction(new_direction)
 
         return True
@@ -499,6 +501,7 @@ class Stone(Entity):
             if entity.cell == self.desired_cell:
                 if (
                     entity.movement_type == MovementType.HOLE
+                    and isinstance(entity, MagicHole)
                     and self.symbol != entity.symbol
                 ):
                     self.direction = (0, 0)
@@ -543,6 +546,8 @@ class Stone(Entity):
                 elif entity.movement_type == MovementType.STATIC:
                     return False
                 elif entity.movement_type == MovementType.PUSHED:
+                    if entity.falling:
+                        return False
                     return entity.request_direction(new_direction)
 
         return True
@@ -564,9 +569,6 @@ class Stone(Entity):
                         entity.movement_type = MovementType.WALKABLE
                         entity.filled = True
                 shared.check_solve = True
-
-    def set_falling(self, toggle: bool) -> None:
-        self.falling = toggle
 
     def animate_fall(self) -> None:
         if self.anims is None:
