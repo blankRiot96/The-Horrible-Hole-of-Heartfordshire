@@ -49,6 +49,7 @@ class PuzzleManager:
             1: self.check_stone_hole_solved,
             4: self.check_combination_lock_solved,
             8: self.check_magic_solved,
+            9: self.check_complex_lock_solved,
         }
         if shared.reset:
             PuzzleManager.SOLVED_ROOMS = {
@@ -56,7 +57,7 @@ class PuzzleManager:
                 for room_no in range(1, 10)
             }
 
-        if shared.room_id == 7:
+        if shared.room_id in shared.MAZE_ROOMS:
             self.on_solve()
         self.place_locks()
 
@@ -110,6 +111,20 @@ class PuzzleManager:
             torches[0].lit
             and torches[7].lit
             and all(not torch.lit for torch in torches[1:7])
+        ):
+            PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
+            self.on_solve()
+            return
+
+        PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
+
+    def check_complex_lock_solved(self):
+        torches = [entity for entity in shared.entities if isinstance(entity, Torch)]
+
+        if (
+            torches[0].lit
+            and torches[5].lit
+            and all(not torch.lit for i, torch in enumerate(torches) if i not in (0, 5))
         ):
             PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
             self.on_solve()
