@@ -1,13 +1,14 @@
 import pygame
 
 from . import shared
+from .common import get_path
 from .entities import Door, Hole, MagicHole, Torch
 from .enums import DoorDirection
 from .gameobject import get_relative_pos
 
 
 class Lock:
-    LOCK_IMAGE = pygame.image.load(shared.ART_PATH / "lock.png").convert_alpha()
+    LOCK_IMAGE = pygame.image.load(get_path("assets/art/lock.png")).convert_alpha()
     LOCK_IMAGE = pygame.transform.scale(LOCK_IMAGE, (32, 32))
 
     def __init__(

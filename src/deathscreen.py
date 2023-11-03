@@ -71,7 +71,7 @@ class DeathScreen(GameState):
 
         if not DeathScreen.frames:
             DeathScreen.frames = get_frames(
-                shared.ART_PATH / "shadowdeath.png", (150, 80)
+                get_path("assets/art/shadowdeath.png"), (150, 80)
             )
             for idx, frame in enumerate(DeathScreen.frames):
                 DeathScreen.frames[idx] = pygame.transform.scale(frame, shared.WIN_SIZE)

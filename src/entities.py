@@ -6,7 +6,7 @@ import pygame
 from . import shared
 from .anim import Animation, get_frames
 from .bloom import Bloom
-from .common import render_at
+from .common import get_path, render_at
 from .enums import DoorDirection, MovementType, StoneSymbol
 from .gameobject import GameObject, get_relative_pos
 from .gamestate import GameStateManager
@@ -76,7 +76,7 @@ class Entity(GameObject):
 
 
 class MagicHole(Entity):
-    FRAMES = get_frames(shared.ART_PATH / "magic-blocks.png", (64, 64))
+    FRAMES = get_frames(get_path("assets/art/magic-blocks.png"), (64, 64))
     BLOCK_IMAGES = {char: image for char, image in zip("OPEN", FRAMES[4:])}
 
     def __init__(
@@ -231,7 +231,7 @@ class MagicBlock(Entity):
 
 
 class Torch(Entity):
-    FRAMES = get_frames(shared.ART_PATH / "torch.png", (64, 64))
+    FRAMES = get_frames(get_path("assets/art/torch.png"), (64, 64))
 
     def __init__(
         self,
@@ -398,7 +398,7 @@ class Player(Entity):
         self.img_rect = self.image.get_rect()
 
     def init_anim(self) -> None:
-        frames = get_frames(shared.ART_PATH / "player-128.png", (64, 128))
+        frames = get_frames(get_path("assets/art/player-128.png"), (64, 128))
 
         for index, frame in enumerate(frames):
             base = pygame.Surface(

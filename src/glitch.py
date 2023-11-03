@@ -4,7 +4,7 @@ import pygame
 
 from . import shared
 from .asset_loader import Loader
-from .common import Time
+from .common import Time, get_path
 
 
 def _get_subsurface(img: pygame.Surface, y):
@@ -49,7 +49,7 @@ class Glitch:
         self.image = shared.screen.copy()
         self.glitching = False
         self.dont_draw = True
-        self.static_sfx = Loader().get_sound(shared.ASSETS_PATH / "audio/static.ogg")
+        self.static_sfx = Loader().get_sound(get_path("assets/audio/static.ogg"))
         self.static_sfx.set_volume(0.1)
         self.pause_over_time = 0.0
 

@@ -16,10 +16,6 @@ if typing.TYPE_CHECKING:
     from .monster_manager import Monster
 
 # Constants
-ASSETS_PATH = Path("assets/")
-ART_PATH = ASSETS_PATH / "art"
-DATA_PATH = ASSETS_PATH / "data"
-ROOMS_PATH = DATA_PATH / "rooms"
 
 ENTITY_SPEED = 250.0
 WIN_WIDTH = 1200.0

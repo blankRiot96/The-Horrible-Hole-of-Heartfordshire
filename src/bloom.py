@@ -2,12 +2,12 @@ import pygame
 
 from . import shared
 from ._types import ColorValue
-from .common import SinWave, scale_add
+from .common import SinWave, get_path, scale_add
 from .gameobject import get_relative_pos
 
 
 class Bloom:
-    IMAGE = pygame.image.load(shared.ART_PATH / "light.png").convert_alpha()
+    IMAGE = pygame.image.load(get_path("assets/art/light.png")).convert_alpha()
 
     def __init__(
         self,

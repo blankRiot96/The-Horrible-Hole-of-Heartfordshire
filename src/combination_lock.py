@@ -2,7 +2,7 @@ import pygame
 
 from . import shared
 from .asset_loader import Loader
-from .common import render_at
+from .common import get_path, render_at
 
 
 class CombinationLock:
@@ -19,9 +19,7 @@ Light the torches which correspond to the letter 'W'",
     }
 
     def __init__(self) -> None:
-        self.font = Loader().get_font(
-            shared.ASSETS_PATH / "font/DotGothic16-Regular.ttf", 24
-        )
+        self.font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 24)
         self.riddle = CombinationLock.RIDDLES.get(shared.room_id)
         if self.riddle is None:
             return
