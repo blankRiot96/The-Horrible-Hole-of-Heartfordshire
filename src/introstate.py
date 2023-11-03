@@ -20,12 +20,16 @@ class IntroState(GameState):
         self.glitch = Glitch()
 
     def load_scenes(self) -> None:
-        scene_files = glob(get_path("assets/intro/*.txt"))
+        scene_files = glob(get_path("assets/intro/scene_*.txt"))
         for file in scene_files:
             number = int(file.split(".")[-2].split("_")[-1])
             with open(file, "r") as scene:
                 text = scene.read()
                 self.scenes[number] = text, len(text.split("(Press any key")[0])
+
+        with open(get_path("assets/intro/instructions.txt"), "r") as instructs:
+            text = instructs.read()
+        self.instructions = self.font.render(text, True, "white")
 
     def is_last_scene(self) -> bool:
         return self.current_scene == max(self.scenes.keys())
@@ -76,7 +80,7 @@ class IntroState(GameState):
 
     def update(self) -> None:
         if shared.keys[pygame.K_SPACE]:
-            self.character_delay = 0.05
+            self.character_delay = 0.025
         else:
             self.character_delay = 0.1
         self.character_timer.time_to_pass = self.character_delay
@@ -90,4 +94,10 @@ class IntroState(GameState):
         )
 
         shared.screen.blit(rendered, (0, 0))
+        shared.screen.blit(
+            self.instructions,
+            self.instructions.get_rect(
+                bottomright=shared.screen.get_rect().bottomright
+            ),
+        )
         self.glitch.draw()

@@ -1,0 +1,4 @@
+WASD or Arrow Keys to move
+Mouse left click to light torches
+Press T to skip introduction
+Press R to reset the current room
