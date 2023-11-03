@@ -201,6 +201,7 @@ class MagicBlock(Entity):
                     ):
                         entity.movement_type = MovementType.WALKABLE
                         entity.filled = True
+                        entity.is_partially_filled = False
                 shared.check_solve = True
 
     def set_falling(self, toggle: bool) -> None:
@@ -533,6 +534,10 @@ class Stone(Entity):
                     self.direction = (0, 0)
                     return
 
+                if isinstance(entity, Hole) and entity.is_partially_filled:
+                    self.direction = (0, 0)
+                    return
+
             if entity.cell == self.cell:
                 if (
                     entity.movement_type == MovementType.HOLE
@@ -540,6 +545,7 @@ class Stone(Entity):
                 ):
                     shared.check_solve = True
                     self.falling = True
+                    entity.is_partially_filled = True
                 else:
                     continue
 
@@ -594,6 +600,7 @@ class Stone(Entity):
                     ):
                         entity.movement_type = MovementType.WALKABLE
                         entity.filled = True
+                        entity.is_partially_filled = False
                 shared.check_solve = True
 
     def animate_fall(self) -> None:
@@ -630,3 +637,4 @@ class Hole(Entity):
         super().__init__(cell, MovementType.HOLE, image)
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
         self.filled = False
+        self.is_partially_filled = False
