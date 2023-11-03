@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import typing
 from pathlib import Path
 
@@ -27,6 +28,8 @@ WIN_SIZE = (WIN_WIDTH, WIN_HEIGHT)
 TILE_SIDE = 64
 TILE_SIZE = (TILE_SIDE, TILE_SIDE)
 
+IS_WASM = sys.platform == "emscripten"
+
 # Shared variables
 room_map: pytmx.TiledMap
 rows: int
@@ -45,7 +48,7 @@ player: Player
 monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
-game_name: str = "Title"
+game_name: str = "The Horrible Hole of Hertfordshire"
 entities_in_room: dict[int, list[Entity]] = {}
 reset: bool = False
 check_solve: bool = False
@@ -54,3 +57,10 @@ update_graph: bool = True
 menu_audio: pygame.mixer.Sound | None = None
 game_audio: pygame.mixer.Sound | None = None
 monster_audio: pygame.mixer.Sound | None = None
+
+# colors
+BUTTON_COLOR = (89, 86, 82)
+BORDER_COLOR = (0, 0, 0)
+TEXT_COLORS = ((106, 190, 48), (0, 0, 0), (172, 50, 50))
+
+WHITE = (172, 50, 50)

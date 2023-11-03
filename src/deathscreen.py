@@ -28,9 +28,9 @@ class DeathScreen(GameState):
                 set_reset_flag,
                 self.button_font,
                 "New Game",
-                "red",
-                "blue",
-                "green",
+                shared.TEXT_COLORS[0],
+                shared.BUTTON_COLOR,
+                shared.BORDER_COLOR,
             ),
             Button(
                 pygame.Vector2(shared.screen.get_rect().center)
@@ -38,11 +38,24 @@ class DeathScreen(GameState):
                 lambda: GameStateManager().set_state("MainMenu"),
                 self.button_font,
                 "Main Menu",
-                "blue",
-                "red",
-                "green",
+                shared.TEXT_COLORS[1],
+                shared.BUTTON_COLOR,
+                shared.BORDER_COLOR,
             ),
         ]
+        if not shared.IS_WASM:
+            self.buttons.append(
+                Button(
+                    pygame.Vector2(shared.screen.get_rect().center)
+                    + pygame.Vector2(0, 200),
+                    quit,
+                    self.button_font,
+                    "Quit",
+                    shared.TEXT_COLORS[2],
+                    shared.BUTTON_COLOR,
+                    shared.BORDER_COLOR,
+                ),
+            )
         self.death_message = self.death_font.render("You have died!", True, "Red")
         if shared.game_audio is not None and shared.game_audio.get_num_channels():
             shared.game_audio.stop()
