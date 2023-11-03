@@ -48,19 +48,28 @@ class Grid:
     def load_entities(self):
         saved_entities = shared.entities_in_room.get(shared.room_id)
         if saved_entities is None:
+            shared.cells = []
             shared.entities = []
             self.load_entities_from_room()
+            self.blit_walls_to_bg()
+            Grid.LOADED_BACKGROUNDS[shared.room_id] = self.background.copy()
         else:
             shared.entities = saved_entities
+            shared.cells = [entity.cell for entity in saved_entities]
             self.background = Grid.LOADED_BACKGROUNDS[shared.room_id]
             for i, entity in enumerate(shared.entities):
                 if isinstance(entity, Player):
                     shared.entities[i] = shared.player
                     break
+
+        self.bg_entities, self.fg_entities = self.filter_entities()
         self.align_player_pos()
 
-    def add_entity(self, entity) -> None:
+    def add_entity(self, entity: Entity) -> None:
         shared.entities.append(entity)
+        if entity.movement_type == MovementType.PATHING:
+            entity.pos = pygame.Vector2(-100, -100)
+        shared.cells.append(entity.cell)
 
     def remove_unused_entities(self) -> None:
         all_entities = shared.entities
@@ -73,14 +82,20 @@ class Grid:
         for entity in shared.entities:
             entity.update()
 
+    def blit_walls_to_bg(self):
+        for entity in shared.entities:
+            if isinstance(entity, Wall) or isinstance(entity, Door):
+                self.blit_to_bg(entity.cell[1], entity.cell[0], entity.image)
+
+    def blit_to_bg(self, row, col, image):
+        self.background.blit(image, (col * shared.TILE_SIDE, row * shared.TILE_SIDE))
+
     def place_entity(
         self, row, col, entity_id, image: pygame.Surface, properties: dict
     ) -> None:
         entity = Grid.ENTITIES.get(entity_id)
         if entity is None:
-            self.background.blit(
-                image, (col * shared.TILE_SIDE, row * shared.TILE_SIDE)
-            )
+            self.blit_to_bg(row, col, image)
             return
         self.add_entity(entity((col, row), image, properties))
 
@@ -96,8 +111,6 @@ class Grid:
                 self.place_entity(
                     y, x, entity_id=entity_id, image=image, properties=properties
                 )
-
-        Grid.LOADED_BACKGROUNDS[shared.room_id] = self.background.copy()
 
     def align_player_pos(self) -> None:
         for entity in shared.entities:
@@ -143,16 +156,14 @@ class Grid:
             )
             background_entities.sort(key=lambda e: int(not isinstance(e, MagicHole)))
 
-
         return background_entities, foreground_entities
 
     def draw(self) -> None:
         # self.draw_grid()
         shared.screen.blit(self.background, get_relative_pos(pygame.Vector2()))
 
-        bg_entities, fg_entities = self.filter_entities()
-        for entity in bg_entities:
+        for entity in self.bg_entities:
             entity.draw()
         shared.player.draw()
-        for entity in fg_entities:
+        for entity in self.fg_entities:
             entity.draw()

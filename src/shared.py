@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import typing
 from pathlib import Path
 
@@ -11,6 +12,8 @@ from .enums import DoorDirection
 
 if typing.TYPE_CHECKING:
     from .entities import Entity, Player
+    from .graph import Graph
+    from .monster_manager import Monster
 
 # Constants
 ASSETS_PATH = Path("assets/")
@@ -25,6 +28,8 @@ WIN_SIZE = (WIN_WIDTH, WIN_HEIGHT)
 TILE_SIDE = 64
 TILE_SIZE = (TILE_SIDE, TILE_SIDE)
 
+IS_WASM = sys.platform == "emscripten"
+
 # Shared variables
 room_map: pytmx.TiledMap
 rows: int
@@ -38,10 +43,24 @@ mouse_pos: pygame.Vector2
 camera_pos: pygame.Vector2
 room_id: int = 1
 entities: list[Entity]
+cells: list[pygame.Vector2]
 player: Player
+monster: Monster
 next_door = DoorDirection.SOUTH
 overlay: pygame.Surface
-game_name: str = "Title"
+game_name: str = "The Horrible Hole of Hertfordshire"
 entities_in_room: dict[int, list[Entity]] = {}
 reset: bool = False
 check_solve: bool = False
+graph: Graph
+update_graph: bool = True
+menu_audio: pygame.mixer.Sound | None = None
+game_audio: pygame.mixer.Sound | None = None
+monster_audio: pygame.mixer.Sound | None = None
+
+# colors
+BUTTON_COLOR = (89, 86, 82)
+BORDER_COLOR = (0, 0, 0)
+TEXT_COLORS = ((106, 190, 48), (0, 0, 0), (172, 50, 50))
+
+WHITE = (172, 50, 50)

@@ -32,10 +32,10 @@ class Core:
         shared.room_id = 1
         shared.entities_in_room = {}
         shared.next_door = DoorDirection.SOUTH
+        shared.update_graph = True
         if hasattr(shared, "overlay"):
-            del shared.overlay
-            del shared.entities
             del shared.player
+            del shared.monster
         GameStateManager().reset()
         self.__init__()
         GameStateManager().set_state("PlayState")
@@ -67,7 +67,7 @@ class Core:
         shared.mouse_pos = pygame.mouse.get_pos()
 
         GameStateManager().update()
-        pygame.display.set_caption(str(shared.clock.get_fps()))
+        pygame.display.set_caption(f"{shared.clock.get_fps():.0f}")
 
     def draw(self) -> None:
         shared.screen.fill("black")

@@ -1,4 +1,5 @@
 import itertools
+import typing as t
 
 import pygame
 
@@ -39,10 +40,26 @@ class Entity(GameObject):
     def request_direction(self, new_direction) -> bool:
         return True
 
+    def get_surrounding_entities(self) -> t.Iterator[t.Self]:
+        for row in (-1, 0, 1):
+            for col in (-1, 0, 1):
+                entity_cell = self.cell + (row, col)
+                if (
+                    entity_cell.x > shared.room_map.width
+                    or entity_cell.y > shared.room_map.height
+                ):
+                    continue
+                try:
+                    yield shared.entities[shared.cells.index(entity_cell)]
+                except ValueError:
+                    continue
+
     def get_cell_diff(self, other_cell):
         return abs(self.cell[0] - other_cell[0]), abs(self.cell[1] - other_cell[1])
 
     def move(self) -> None:
+        if self.desired_pos != self.pos:
+            shared.update_graph = True
         self.pos.move_towards_ip(self.desired_pos, shared.ENTITY_SPEED * shared.dt)
         self.rect.topleft = self.pos
 
@@ -161,6 +178,8 @@ class MagicBlock(Entity):
                 elif entity.movement_type == MovementType.STATIC:
                     return False
                 elif entity.movement_type == MovementType.PUSHED:
+                    if entity.falling:
+                        return False
                     return entity.request_direction(new_direction)
 
         return True
@@ -309,6 +328,9 @@ class Door(Entity):
         else:
             self.locked = self.door_direction != shared.next_door
 
+    def draw(self) -> None:
+        return
+
 
 class Wall(Entity):
     def __init__(
@@ -319,6 +341,9 @@ class Wall(Entity):
     ) -> None:
         self.properties = properties
         super().__init__(cell, MovementType.STATIC, image)
+
+    def draw(self) -> None:
+        return
 
 
 class Pillar(Entity):
@@ -419,7 +444,7 @@ class Player(Entity):
         GameStateManager().set_state("PlayState")
 
     def scan_surroundings(self) -> None:
-        for entity in shared.entities:
+        for entity in self.get_surrounding_entities():
             if entity.cell == self.cell:
                 continue
             if (
@@ -497,6 +522,7 @@ class Stone(Entity):
             if entity.cell == self.desired_cell:
                 if (
                     entity.movement_type == MovementType.HOLE
+                    and isinstance(entity, MagicHole)
                     and self.symbol != entity.symbol
                 ):
                     self.direction = (0, 0)
@@ -541,6 +567,8 @@ class Stone(Entity):
                 elif entity.movement_type == MovementType.STATIC:
                     return False
                 elif entity.movement_type == MovementType.PUSHED:
+                    if entity.falling:
+                        return False
                     return entity.request_direction(new_direction)
 
         return True
@@ -562,9 +590,6 @@ class Stone(Entity):
                         entity.movement_type = MovementType.WALKABLE
                         entity.filled = True
                 shared.check_solve = True
-
-    def set_falling(self, toggle: bool) -> None:
-        self.falling = toggle
 
     def animate_fall(self) -> None:
         if self.anims is None:

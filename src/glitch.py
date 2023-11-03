@@ -50,6 +50,7 @@ class Glitch:
         self.glitching = False
         self.dont_draw = True
         self.static_sfx = Loader().get_sound(shared.ASSETS_PATH / "audio/static.ogg")
+        self.static_sfx.set_volume(0.1)
         self.pause_over_time = 0.0
 
     def update(self):

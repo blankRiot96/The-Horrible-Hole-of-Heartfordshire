@@ -21,12 +21,16 @@ class Button:
         self._callback = callback
         self.text = font.render(text, True, text_color)
 
-        self.surf = pygame.Surface(self.text.get_size())
-        self.rect = self.text.get_rect(center=self.pos)
-        rect = self.surf.get_rect()
+        rect = self.text.get_rect()
+        rect.size += pygame.Vector2(20, 0)
+
+        self.surf = pygame.Surface(rect.size, pygame.SRCALPHA).convert_alpha()
         pygame.draw.rect(self.surf, background_color, rect, border_radius=10)
         pygame.draw.rect(self.surf, border_color, rect, 2, border_radius=10)
-        self.surf.blit(self.text, rect)
+        self.surf.blit(self.text, (10, 0))
+
+        self.rect = rect.copy()
+        self.rect.center = self.pos
 
     def click(self) -> None:
         self._callback()

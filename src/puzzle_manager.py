@@ -40,6 +40,7 @@ class PuzzleManager:
     """Handles opening doors and solving puzzles."""
 
     SOLVED_ROOMS = {room_no: False for room_no in range(1, 10)}
+    SOLVED_ROOMS[7] = True
 
     def __init__(self) -> None:
         self.room_solve_checkers = {
@@ -47,6 +48,12 @@ class PuzzleManager:
             2: self.check_magic_solved,
             4: self.check_combination_lock_solved,
         }
+        if shared.reset:
+            PuzzleManager.SOLVED_ROOMS = {room_no: False for room_no in range(1, 10)}
+            PuzzleManager.SOLVED_ROOMS[7] = True
+
+        if shared.room_id == 7:
+            self.on_solve()
         self.place_locks()
 
     def place_locks(self):
@@ -92,7 +99,11 @@ class PuzzleManager:
         """
         torches = [entity for entity in shared.entities if isinstance(entity, Torch)]
 
-        if torches[0].lit and torches[7].lit:
+        if (
+            torches[0].lit
+            and torches[7].lit
+            and all(not torch.lit for torch in torches[1:7])
+        ):
             PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
             self.on_solve()
             return

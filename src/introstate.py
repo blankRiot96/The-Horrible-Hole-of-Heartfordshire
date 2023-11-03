@@ -20,15 +20,26 @@ class IntroState(GameState):
         self.glitch = Glitch()
 
     def load_scenes(self) -> None:
-        scene_files = glob(get_path("assets/intro/*.txt"))
+        scene_files = glob(get_path("assets/intro/scene_*.txt"))
         for file in scene_files:
             number = int(file.split(".")[-2].split("_")[-1])
             with open(file, "r") as scene:
                 text = scene.read()
                 self.scenes[number] = text, len(text.split("(Press any key")[0])
 
+        with open(get_path("assets/intro/instructions.txt"), "r") as instructs:
+            text = instructs.read()
+        self.instructions = self.font.render(text, True, "white")
+
     def is_last_scene(self) -> bool:
         return self.current_scene == max(self.scenes.keys())
+
+    def start_music(self) -> None:
+        if shared.menu_audio is None or not shared.menu_audio.get_num_channels():
+            shared.menu_audio = Loader().get_sound(
+                get_path("assets/audio/hhhmenumotif.ogg")
+            )
+            shared.menu_audio.play(-1)
 
     def move_to_next_scene(self) -> None:
         self.character_timer.reset()
@@ -36,6 +47,8 @@ class IntroState(GameState):
         self.current_scene += 1
         self.character_index = 0
         self.ready_to_continue = False
+        if self.current_scene >= 2 and shared.menu_audio is None:
+            self.start_music()
 
     def increment_character(self) -> None:
         if self.character_index < len(self.scenes[self.current_scene][0]):
@@ -57,6 +70,7 @@ class IntroState(GameState):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_t:
                     self.reset()
+                    self.start_music()
                     GameStateManager().set_state("MainMenu")
                 if self.ready_to_continue:
                     if not self.is_last_scene():
@@ -66,7 +80,7 @@ class IntroState(GameState):
 
     def update(self) -> None:
         if shared.keys[pygame.K_SPACE]:
-            self.character_delay = 0.05
+            self.character_delay = 0.025
         else:
             self.character_delay = 0.1
         self.character_timer.time_to_pass = self.character_delay
@@ -80,4 +94,10 @@ class IntroState(GameState):
         )
 
         shared.screen.blit(rendered, (0, 0))
+        shared.screen.blit(
+            self.instructions,
+            self.instructions.get_rect(
+                bottomright=shared.screen.get_rect().bottomright
+            ),
+        )
         self.glitch.draw()
