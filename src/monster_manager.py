@@ -28,6 +28,9 @@ class Monster(GameObject):
                 get_path("assets/audio/hhhcreeps.ogg")
             )
 
+        self.cooldown_timer = Time(60)
+        self.on_cooldown = False
+
     def init_anim(self) -> None:
         frames = get_frames(shared.ART_PATH / "monster-64.png", (64, 64))
 
@@ -114,6 +117,9 @@ class Monster(GameObject):
         self.last_pos = self.pos.copy()
 
     def update(self) -> None:
+        self.cooldown_timer.reset()
+        self.on_cooldown = True
+        print("on cooldown")
         self.update_anim()
         self.pathfind_to_player()
         if self.image.get_rect(topleft=self.pos).colliderect(
@@ -129,8 +135,8 @@ class MonsterManager:
     def __init__(self) -> None:
         self.room = 9
         self.last_room = -1
-        self.move_chance = 1.0
-        self.move_time = 0.2  # seconds
+        self.move_chance = 0.3
+        self.move_time = 15  # seconds
         self.timer = Time(self.move_time)
         self.create_monster()
 
@@ -183,6 +189,12 @@ class MonsterManager:
                     possible_rooms.append(test_room)
                     possible_diffs.append(diff)
 
+        if shared.monster.on_cooldown:
+            if shared.monster.cooldown_timer.tick():
+                shared.monster.on_cooldown = False
+            elif shared.room_id in possible_rooms:
+                possible_rooms.remove(shared.room_id)
+
         self.last_room = self.room
         self.room = random.choice(possible_rooms)
 
@@ -191,6 +203,7 @@ class MonsterManager:
             shared.monster.align_pos_with_door(diffs[chosen_diff])
 
     def update(self):
+        print(self.room)
         if self.must_align:
             if self.align_timer.tick():
                 shared.monster.align_pos_with_door(shared.next_door)
