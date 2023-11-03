@@ -40,6 +40,7 @@ mouse_pos: pygame.Vector2
 camera_pos: pygame.Vector2
 room_id: int = 1
 entities: list[Entity]
+cells: list[pygame.Vector2]
 player: Player
 monster: Monster
 next_door = DoorDirection.SOUTH
