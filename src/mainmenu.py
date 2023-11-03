@@ -59,6 +59,11 @@ class MainMenu(GameState):
         if shared.menu_audio is not None and not shared.menu_audio.get_num_channels():
             shared.menu_audio.play(-1)
 
+        self.bg = pygame.transform.scale(
+            pygame.image.load(shared.ART_PATH / "bricks.png").convert_alpha(),
+            shared.WIN_SIZE,
+        )
+
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -71,6 +76,7 @@ class MainMenu(GameState):
         ...
 
     def draw(self) -> None:
+        shared.screen.blit(self.bg, (0, 0))
         shared.screen.blit(
             self.title, self.title.get_rect(midtop=shared.screen.get_rect().midtop)
         )

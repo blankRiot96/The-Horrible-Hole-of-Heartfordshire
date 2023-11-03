@@ -1,9 +1,10 @@
 import pygame
 
 from . import shared
+from .anim import get_frames
 from .asset_loader import Loader
 from .button import Button
-from .common import get_path
+from .common import Time, get_path
 from .gamestate import GameState, GameStateManager
 
 
@@ -13,9 +14,12 @@ def set_reset_flag():
 
 class DeathScreen(GameState):
     death_audio: pygame.mixer.Sound | None = None
+    frames: list[pygame.Surface] = []
 
     def __init__(self) -> None:
         super().__init__("DeathScreen")
+        self.frame_timer = Time(0.10)
+
         self.button_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 60)
         self.death_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 120)
         self.buttons = [
@@ -52,8 +56,20 @@ class DeathScreen(GameState):
             DeathScreen.death_audio.stop()
         DeathScreen.death_audio.play()
 
+        if not DeathScreen.frames:
+            DeathScreen.frames = get_frames(
+                shared.ART_PATH / "shadowdeath.png", (150, 80)
+            )
+            for idx, frame in enumerate(DeathScreen.frames):
+                DeathScreen.frames[idx] = pygame.transform.scale(frame, shared.WIN_SIZE)
+        self.frame_index = 0
+        self.animation_finished = False
+
     def handle_events(self) -> None:
         for event in shared.events:
+            if not self.animation_finished:
+                return
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     for button in self.buttons:
@@ -64,9 +80,18 @@ class DeathScreen(GameState):
         ...
 
     def draw(self) -> None:
-        shared.screen.blit(
-            self.death_message,
-            self.death_message.get_rect(midtop=shared.screen.get_rect().midtop),
-        )
-        for button in self.buttons:
-            button.draw()
+        if self.frame_index < len(DeathScreen.frames):
+            if self.frame_timer.tick():
+                self.frame_index += 1
+        else:
+            self.animation_finished = True
+
+        display_frame_index = min(self.frame_index, len(DeathScreen.frames) - 1)
+        shared.screen.blit(DeathScreen.frames[display_frame_index], (0, 0))
+        if self.animation_finished:
+            shared.screen.blit(
+                self.death_message,
+                self.death_message.get_rect(midtop=shared.screen.get_rect().midtop),
+            )
+            for button in self.buttons:
+                button.draw()
