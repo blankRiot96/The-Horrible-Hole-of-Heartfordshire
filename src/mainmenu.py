@@ -3,6 +3,7 @@ import pygame
 from . import shared
 from .asset_loader import Loader
 from .button import Button
+from .common import get_path
 from .gamestate import GameState, GameStateManager
 
 
@@ -63,7 +64,7 @@ class MainMenu(GameState):
             shared.menu_audio.play(-1)
 
         self.bg = pygame.transform.scale(
-            pygame.image.load(shared.ART_PATH / "bricks.png").convert_alpha(),
+            pygame.image.load(get_path("assets/art/bricks.png")).convert_alpha(),
             shared.WIN_SIZE,
         )
 

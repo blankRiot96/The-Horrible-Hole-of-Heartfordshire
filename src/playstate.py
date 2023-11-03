@@ -14,7 +14,7 @@ from .puzzle_manager import PuzzleManager
 
 def load_room():
     """Loads room from room ID"""
-    shared.room_map = pytmx.load_pygame(shared.ROOMS_PATH / f"{shared.room_id}.tmx")  # type: ignore
+    shared.room_map = pytmx.load_pygame(get_path(f"assets/data/rooms/{shared.room_id}.tmx"))  # type: ignore
     shared.rows = shared.room_map.height
     shared.cols = shared.room_map.width
 

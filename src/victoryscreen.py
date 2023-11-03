@@ -75,7 +75,7 @@ class VictoryScreen(GameState):
         )
 
         self.spritesheet = pygame.image.load(
-            shared.ART_PATH / "tileset-64.png"
+            get_path("assets/art/tileset-64.png")
         ).convert_alpha()
         floor_rect = pygame.Rect(128, 128, 64, 64)
         wall_rect = pygame.Rect(128, 192, 64, 128)
@@ -99,9 +99,9 @@ class VictoryScreen(GameState):
         self.bg.blit(
             self.door, self.door.get_rect(midbottom=self.bg.get_rect().midbottom)
         )
-        self.player_frames = get_frames(shared.ART_PATH / "player-128.png", (64, 128))[
-            :4
-        ]
+        self.player_frames = get_frames(
+            get_path("assets/art/player-128.png"), (64, 128)
+        )[:4]
         self.player_rect = self.player_frames[0].get_frect(
             center=shared.screen.get_rect().center
         )

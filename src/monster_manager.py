@@ -34,7 +34,7 @@ class Monster(GameObject):
         self.on_cooldown = False
 
     def init_anim(self) -> None:
-        frames = get_frames(shared.ART_PATH / "monster-64.png", (64, 64))
+        frames = get_frames(get_path("assets/art/monster-64.png"), (64, 64))
 
         for index, frame in enumerate(frames):
             base = pygame.Surface((shared.TILE_SIDE, shared.TILE_SIDE), pygame.SRCALPHA)
