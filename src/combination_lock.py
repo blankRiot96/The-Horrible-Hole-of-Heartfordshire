@@ -12,6 +12,8 @@ class CombinationLock:
         4: "This creature dwelves in the sea.. it has stretchy arms and its\
  name starts with the word in room 8.. light the first and nth torch where\
  n is the number of arms this sea creature has.",
+        2: "Light the way",
+        5: "I wonder what I'm supposed to do here...",
         9: "I am an invention that lets you look right through a wall.\
 Light the torches which correspond to the letter 'W'",
     }

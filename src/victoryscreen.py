@@ -1,3 +1,5 @@
+from math import ceil
+
 import pygame
 
 from . import shared
@@ -83,13 +85,15 @@ class VictoryScreen(GameState):
         self.door = self.spritesheet.subsurface(door_rect)
 
         self.bg = pygame.Surface(shared.WIN_SIZE)
-        for row in range(shared.rows):
-            for col in range(shared.cols):
+        rows = ceil(shared.WIN_HEIGHT / shared.TILE_SIDE)
+        cols = ceil(shared.WIN_WIDTH / shared.TILE_SIDE)
+        for row in range(rows):
+            for col in range(cols):
                 pos = col * shared.TILE_SIDE, row * shared.TILE_SIDE
                 self.bg.blit(self.floor_tile, pos)
 
-        for col in range(shared.cols):
-            pos = col * shared.TILE_SIDE, (shared.rows - 4) * shared.TILE_SIDE + 10
+        for col in range(cols):
+            pos = col * shared.TILE_SIDE, (rows - 3) * shared.TILE_SIDE + 10
             self.bg.blit(self.wall_tile, pos)
 
         self.bg.blit(

@@ -4,7 +4,6 @@ from . import shared
 from .entities import Door, Hole, MagicHole, Torch
 from .enums import DoorDirection
 from .gameobject import get_relative_pos
-from .gamestate import GameStateManager
 
 
 class Lock:
@@ -48,7 +47,10 @@ class PuzzleManager:
     def __init__(self) -> None:
         self.room_solve_checkers = {
             1: self.check_stone_hole_solved,
-            4: self.check_combination_lock_solved,
+            2: self.check_combination_lock_solved_rm_2,
+            4: self.check_combination_lock_solved_rm_4,
+            5: self.check_combo_room_solved,
+            6: self.check_stone_hole_solved,
             8: self.check_magic_solved,
             9: self.check_complex_lock_solved,
         }
@@ -76,6 +78,24 @@ class PuzzleManager:
             if isinstance(entity, Door):
                 entity.locked = False
 
+    def check_combo_room_solved(self):
+        torches = []
+
+        for entity in shared.entities:
+            if isinstance(entity, Torch):
+                torches.append(entity)
+                continue
+            if isinstance(entity, Hole) and not entity.filled:
+                PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
+                return
+
+        if not all(torch.lit for torch in torches):
+            PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
+            return
+
+        PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
+        self.on_solve()
+
     def check_stone_hole_solved(self):
         for entity in shared.entities:
             if isinstance(entity, Hole) and not entity.filled:
@@ -97,7 +117,20 @@ class PuzzleManager:
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
         self.on_solve()
 
-    def check_combination_lock_solved(self):
+    def check_combination_lock_solved_rm_2(self):
+        """
+        Light the way
+        """
+        torches = [entity for entity in shared.entities if isinstance(entity, Torch)]
+
+        if all(torch.lit for torch in torches):
+            PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
+            self.on_solve()
+            return
+
+        PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
+
+    def check_combination_lock_solved_rm_4(self):
         """
         The riddle goes like this:
         'This creature dwelves in the sea.. it has stretchy arms and its name starts

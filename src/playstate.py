@@ -41,10 +41,6 @@ class PlayState(GameState):
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.KEYDOWN:
-                #  this is purely for testing purposes
-                # FIX BEFORE RELEASE
-                if event.key == pygame.K_ESCAPE:
-                    GameStateManager().set_state("VictoryScreen")
                 if event.key == pygame.K_r:
                     GameStateManager().set_state("PlayState")
 
@@ -68,14 +64,14 @@ class PlayState(GameState):
         self.stop_monster_audio_if_not_chasing()
         self.grid.update()
         self.handle_camera()
-        # self.monster_manager.update() # FIX BEFORE RELEASE
+        self.monster_manager.update()
         self.puzzle_manager.update()
         self.comb_lock.update()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
-        # self.monster_manager.draw() # FIX BEFORE RELEASE
+        self.monster_manager.draw()
         self.puzzle_manager.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
         self.comb_lock.draw()
