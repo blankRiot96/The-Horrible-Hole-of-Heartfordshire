@@ -4,6 +4,7 @@ from . import shared
 from .entities import Door, Hole, MagicHole, Torch
 from .enums import DoorDirection
 from .gameobject import get_relative_pos
+from .gamestate import GameStateManager
 
 
 class Lock:

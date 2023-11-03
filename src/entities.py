@@ -438,11 +438,18 @@ class Player(Entity):
             return
         self.last_direction = self.direction
 
-    def travel_to_next_room(self, entity: Entity):
+    def check_for_win(self, entity: Door):
+        if shared.room_id == 11 and entity.door_direction == DoorDirection.SOUTH:
+            GameStateManager().set_state("VictoryScreen")
+            return
+
+        GameStateManager().set_state("PlayState")
+
+    def travel_to_next_room(self, entity: Door):
         shared.entities_in_room[shared.room_id] = shared.entities.copy()
         shared.room_id += entity.room_delta
         shared.next_door = entity.next_door
-        GameStateManager().set_state("PlayState")
+        self.check_for_win(entity)
 
     def scan_surroundings(self) -> None:
         entities = (
