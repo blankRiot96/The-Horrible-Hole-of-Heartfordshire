@@ -113,7 +113,7 @@ class Monster(GameObject):
 
 
 class MonsterManager:
-    PLAYER_CHASE_DISTANCE = 300
+    PLAYER_CHASE_DISTANCE = 200
     CHASE_INTERVAL = 1.0
 
     def __init__(self) -> None:
