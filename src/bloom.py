@@ -60,5 +60,5 @@ class Bloom:
         shared.overlay.blit(
             self.surf,
             get_relative_pos(self.rect.topleft),
-            # special_flags=pygame.BLEND_RGBA_SUB,
+            special_flags=pygame.BLEND_RGBA_MAX,
         )
