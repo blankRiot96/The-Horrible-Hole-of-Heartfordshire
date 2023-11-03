@@ -48,14 +48,12 @@ class Grid:
     def load_entities(self):
         saved_entities = shared.entities_in_room.get(shared.room_id)
         if saved_entities is None:
-            shared.cells = []
             shared.entities = []
             self.load_entities_from_room()
             self.blit_walls_to_bg()
             Grid.LOADED_BACKGROUNDS[shared.room_id] = self.background.copy()
         else:
             shared.entities = saved_entities
-            shared.cells = [entity.cell for entity in saved_entities]
             self.background = Grid.LOADED_BACKGROUNDS[shared.room_id]
             for i, entity in enumerate(shared.entities):
                 if isinstance(entity, Player):
@@ -64,12 +62,12 @@ class Grid:
 
         self.bg_entities, self.fg_entities = self.filter_entities()
         self.align_player_pos()
+        shared.cells = [entity.cell for entity in shared.entities]
 
     def add_entity(self, entity: Entity) -> None:
         shared.entities.append(entity)
         if entity.movement_type == MovementType.PATHING:
             entity.pos = pygame.Vector2(-100, -100)
-        shared.cells.append(entity.cell)
 
     def remove_unused_entities(self) -> None:
         all_entities = shared.entities

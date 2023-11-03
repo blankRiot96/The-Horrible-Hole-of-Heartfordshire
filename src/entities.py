@@ -261,7 +261,7 @@ class Torch(Entity):
 
                 if relative_rect.collidepoint(shared.mouse_pos):
                     self.clicked = True
-                    if self.near:
+                    if self.near and shared.room_id in shared.COMB_LOCK_ROOMS:
                         shared.check_solve = True
 
     def check_near(self):
@@ -444,7 +444,12 @@ class Player(Entity):
         GameStateManager().set_state("PlayState")
 
     def scan_surroundings(self) -> None:
-        for entity in self.get_surrounding_entities():
+        entities = (
+            self.get_surrounding_entities()
+            if shared.room_id in shared.MAZE_ROOMS
+            else shared.entities
+        )
+        for entity in entities:
             if entity.cell == self.cell:
                 continue
             if (
