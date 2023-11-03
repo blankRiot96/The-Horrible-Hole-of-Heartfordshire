@@ -67,7 +67,7 @@ class Core:
         shared.mouse_pos = pygame.mouse.get_pos()
 
         GameStateManager().update()
-        pygame.display.set_caption(f"{shared.clock.get_fps():.0f}")
+        pygame.display.set_caption(f"{shared.game_name} | {shared.clock.get_fps():.0f}")
 
     def draw(self) -> None:
         shared.screen.fill("black")
