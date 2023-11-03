@@ -49,7 +49,7 @@ class Glitch:
         self.image = shared.screen.copy()
         self.glitching = False
         self.dont_draw = True
-        self.static_sfx = Loader().get_sound(shared.ASSETS_PATH / "audio/static.wav")
+        self.static_sfx = Loader().get_sound(shared.ASSETS_PATH / "audio/static.ogg")
         self.pause_over_time = 0.0
 
     def update(self):
