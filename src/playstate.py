@@ -43,7 +43,7 @@ class PlayState(GameState):
             if event.type == pygame.KEYDOWN:
                 #  this is purely for testing purposes
                 if event.key == pygame.K_ESCAPE:
-                    GameStateManager().set_state("DeathScreen")
+                    GameStateManager().set_state("VictoryScreen")
                 if event.key == pygame.K_r:
                     GameStateManager().set_state("PlayState")
 
