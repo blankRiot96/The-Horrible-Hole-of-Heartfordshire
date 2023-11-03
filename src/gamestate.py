@@ -56,6 +56,3 @@ class GameStateManager:
     def handle_events(self) -> None:
         if self.state is not None:
             self.state.handle_events()
-
-    def print_states(self) -> None:
-        print(self.states)

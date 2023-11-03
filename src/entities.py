@@ -441,6 +441,7 @@ class Player(Entity):
     def check_for_win(self, entity: Door):
         if shared.room_id == 11 and entity.door_direction == DoorDirection.SOUTH:
             GameStateManager().set_state("VictoryScreen")
+            shared.win = True
             return
 
         GameStateManager().set_state("PlayState")
@@ -475,6 +476,8 @@ class Player(Entity):
             ):
                 if isinstance(entity, Door) and not entity.locked:
                     self.travel_to_next_room(entity)
+                    if shared.win:
+                        return
                 self.direction = (0, 0)
             if (
                 entity.cell == self.desired_cell
@@ -495,6 +498,8 @@ class Player(Entity):
         self.img_rect.center = self.rect.center
         self.bloom.update(self.img_rect.center)
         self.scan_surroundings()
+        if shared.win:
+            return
         self.update_anim()
 
     def draw(self) -> None:

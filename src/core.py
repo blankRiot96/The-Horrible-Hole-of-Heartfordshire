@@ -29,6 +29,7 @@ class Core:
         GameStateManager().set_state("IntroState")
 
     def reset(self) -> None:
+        shared.win = False
         shared.room_id = 1
         shared.entities_in_room = {}
         shared.next_door = DoorDirection.SOUTH
@@ -67,7 +68,6 @@ class Core:
         shared.mouse_pos = pygame.mouse.get_pos()
 
         GameStateManager().update()
-        pygame.display.set_caption(f"{shared.game_name} | {shared.clock.get_fps():.0f}")
 
     def draw(self) -> None:
         shared.screen.fill("black")

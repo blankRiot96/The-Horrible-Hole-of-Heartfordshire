@@ -27,8 +27,9 @@ WIN_HEIGHT = 650.0
 WIN_SIZE = (WIN_WIDTH, WIN_HEIGHT)
 TILE_SIDE = 64
 TILE_SIZE = (TILE_SIDE, TILE_SIDE)
-MAZE_ROOMS = (2, 3, 5, 6, 7)
-COMB_LOCK_ROOMS = (4, 9)
+# MAZE_ROOMS = (3, 5, 7)
+MAZE_ROOMS = (3, 7)
+COMB_LOCK_ROOMS = (2, 5, 4, 9)
 
 IS_WASM = sys.platform == "emscripten"
 
@@ -59,6 +60,7 @@ update_graph: bool = True
 menu_audio: pygame.mixer.Sound | None = None
 game_audio: pygame.mixer.Sound | None = None
 monster_audio: pygame.mixer.Sound | None = None
+win: bool = False
 
 # colors
 BUTTON_COLOR = (89, 86, 82)

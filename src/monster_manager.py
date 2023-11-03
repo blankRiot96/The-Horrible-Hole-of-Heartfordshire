@@ -15,6 +15,8 @@ from .graph import Graph
 
 class Monster(GameObject):
     def __init__(self) -> None:
+        if not hasattr(self, "new_pos"):
+            self.new_pos = (0, 0)
         self.init_anim()
         super().__init__(
             pos=pygame.Vector2(),
@@ -107,7 +109,7 @@ class Monster(GameObject):
                     pygame.Vector2(self.path.popleft()) * shared.TILE_SIDE
                 ).yx
             self.pos.move_towards_ip(
-                self.new_pos, shared.ENTITY_SPEED * 0.3 * shared.dt
+                self.new_pos, shared.ENTITY_SPEED * 0.6 * shared.dt
             )
 
     def update_anim(self) -> None:
@@ -119,7 +121,6 @@ class Monster(GameObject):
     def update(self) -> None:
         self.cooldown_timer.reset()
         self.on_cooldown = True
-        print("on cooldown")
         self.update_anim()
         self.pathfind_to_player()
         if self.image.get_rect(topleft=self.pos).colliderect(
@@ -203,7 +204,6 @@ class MonsterManager:
             shared.monster.align_pos_with_door(diffs[chosen_diff])
 
     def update(self):
-        print(self.room)
         if self.must_align:
             if self.align_timer.tick():
                 shared.monster.align_pos_with_door(shared.next_door)

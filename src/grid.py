@@ -79,6 +79,8 @@ class Grid:
         self.remove_unused_entities()
         for entity in shared.entities:
             entity.update()
+            if shared.win:
+                return
 
     def blit_walls_to_bg(self):
         for entity in shared.entities:
