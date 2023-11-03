@@ -47,6 +47,8 @@ class PuzzleManager:
             2: self.check_magic_solved,
             4: self.check_combination_lock_solved,
         }
+        if shared.reset:
+            PuzzleManager.SOLVED_ROOMS = {room_no: False for room_no in range(1, 10)}
         self.place_locks()
 
     def place_locks(self):

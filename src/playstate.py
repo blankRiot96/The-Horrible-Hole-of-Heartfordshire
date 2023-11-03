@@ -28,13 +28,14 @@ class PlayState(GameState):
         shared.overlay = pygame.Surface(shared.WIN_SIZE)
         self.puzzle_manager = PuzzleManager()
         self.comb_lock = CombinationLock()
+        shared.update_graph = True
 
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.KEYDOWN:
                 #  this is purely for testing purposes
-                #         if event.key == pygame.K_ESCAPE:
-                #             GameStateManager().set_state("DeathScreen")
+                # if event.key == pygame.K_ESCAPE:
+                #     GameStateManager().set_state("DeathScreen")
                 if event.key == pygame.K_r:
                     GameStateManager().set_state("PlayState")
 

@@ -11,6 +11,7 @@ from .enums import DoorDirection
 
 if typing.TYPE_CHECKING:
     from .entities import Entity, Player
+    from .graph import Graph
     from .monster_manager import Monster
 
 # Constants
@@ -47,3 +48,5 @@ game_name: str = "Title"
 entities_in_room: dict[int, list[Entity]] = {}
 reset: bool = False
 check_solve: bool = False
+graph: Graph
+update_graph: bool = True

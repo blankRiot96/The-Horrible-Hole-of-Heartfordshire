@@ -1,5 +1,4 @@
 import random
-import typing as t
 
 import pygame
 
@@ -9,6 +8,8 @@ from .common import Time, render_at
 from .entities import Door
 from .enums import DoorDirection
 from .gameobject import GameObject
+from .gamestate import GameStateManager
+from .graph import Graph
 
 
 class Monster(GameObject):
@@ -21,8 +22,6 @@ class Monster(GameObject):
             image=pygame.Surface(shared.TILE_SIZE),
         )
         self.chasing = False
-
-        print("Monster created")
 
     def init_anim(self) -> None:
         frames = get_frames(shared.ART_PATH / "monster-64.png", (64, 64))
@@ -54,6 +53,7 @@ class Monster(GameObject):
         for entity in shared.entities:
             if isinstance(entity, Door) and entity.door_direction == door_direction:
                 self.pos = entity.pos.copy()
+                self.new_pos = self.pos.copy()
                 return
 
     def get_delta_direction(self):
@@ -65,16 +65,37 @@ class Monster(GameObject):
 
         return (0, 1)
 
-    def pathfind_to_player(self):
+    def pathfind_to_player(self) -> None:
         """
         Just moves toward the player in a straight line for now. When implementing
         actual pathfinding you can use `shared.entities` which contain the absolute pos
         as `Entity.pos` and their rect as `Entity.rect` which you may require.
         """
         self.chasing = True
-        self.pos.move_towards_ip(
-            shared.player.pos, shared.ENTITY_SPEED * 0.3 * shared.dt
-        )
+
+        if shared.update_graph:
+            shared.update_graph = False
+            shared.graph = Graph()
+            shared.graph.create_graph()
+
+            monster_cell = int(self.pos.y / shared.TILE_SIDE), int(
+                self.pos.x / shared.TILE_SIDE
+            )
+            player_cell = int(shared.player.cell.y), int(shared.player.cell.x)
+            self.path = shared.graph.search(monster_cell, player_cell)
+            if self.pos == self.new_pos:
+                self.new_pos = (
+                    pygame.Vector2(self.path.popleft()) * shared.TILE_SIDE
+                ).yx
+
+        if self.path:
+            if self.pos == self.new_pos:
+                self.new_pos = (
+                    pygame.Vector2(self.path.popleft()) * shared.TILE_SIDE
+                ).yx
+            self.pos.move_towards_ip(
+                self.new_pos, shared.ENTITY_SPEED * 0.3 * shared.dt
+            )
 
     def update_anim(self) -> None:
         anim = self.anims.get(self.get_delta_direction())
@@ -85,6 +106,10 @@ class Monster(GameObject):
     def update(self) -> None:
         self.update_anim()
         self.pathfind_to_player()
+        if self.image.get_rect(topleft=self.pos).colliderect(
+            shared.player.image.get_rect(midleft=shared.player.pos)
+        ):
+            GameStateManager().set_state("DeathScreen")
 
 
 class MonsterManager:
@@ -108,7 +133,6 @@ class MonsterManager:
 
         if not hasattr(shared, "monster"):
             shared.monster = Monster()
-            print("CREATE MONSTER")
 
         # If the monster was still chasing the player while
         # he moved into the next room, chase him into the next room as well
@@ -117,7 +141,6 @@ class MonsterManager:
             and shared.monster.pos.distance_to(shared.player.pos)
             < MonsterManager.PLAYER_CHASE_DISTANCE
         ):
-            print("ALIGN POS")
             self.must_align = True
 
     def change_room(self):
@@ -156,8 +179,6 @@ class MonsterManager:
         if self.room == shared.room_id:
             chosen_diff = possible_diffs[possible_rooms.index(self.room)]
             shared.monster.align_pos_with_door(diffs[chosen_diff])
-
-        print(f"Moved from {self.last_room} to {self.room}")
 
     def update(self):
         if self.must_align:
