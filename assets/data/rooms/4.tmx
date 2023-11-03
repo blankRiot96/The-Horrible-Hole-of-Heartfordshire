@@ -1,33 +1,150 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="1">
- <tileset firstgid="1" source="../tmx/placeholders.tsx"/>
- <tileset firstgid="10" source="../tmx/tiles.tsx"/>
- <layer id="2" name="Tile Layer 2" width="10" height="10">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="15" height="15" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="1">
+ <tileset firstgid="1" name="tiles" tilewidth="64" tileheight="64" tilecount="78" columns="6">
+  <image source="../../art/tileset-64.png" width="384" height="832"/>
+  <tile id="0" type="wall"/>
+  <tile id="1" type="wall"/>
+  <tile id="2" type="wall"/>
+  <tile id="3" type="wall"/>
+  <tile id="4" type="wall"/>
+  <tile id="5" type="foreground"/>
+  <tile id="6" type="wall"/>
+  <tile id="7" type="wall"/>
+  <tile id="8" type="wall"/>
+  <tile id="9" type="wall"/>
+  <tile id="10" type="wall"/>
+  <tile id="11" type="foreground"/>
+  <tile id="12" type="wall"/>
+  <tile id="13" type="wall"/>
+  <tile id="15" type="wall"/>
+  <tile id="16" type="wall"/>
+  <tile id="17" type="pillar"/>
+  <tile id="18" type="wall"/>
+  <tile id="19" type="wall"/>
+  <tile id="20" type="wall"/>
+  <tile id="21" type="wall"/>
+  <tile id="22" type="wall"/>
+  <tile id="24" type="wall"/>
+  <tile id="25" type="wall"/>
+  <tile id="26" type="wall"/>
+  <tile id="27" type="wall"/>
+  <tile id="28" type="wall"/>
+  <tile id="30" type="torch"/>
+  <tile id="36" type="hole">
+   <properties>
+    <property name="symbol" value="teacup"/>
+   </properties>
+  </tile>
+  <tile id="37" type="hole">
+   <properties>
+    <property name="symbol" value="switzerland"/>
+   </properties>
+  </tile>
+  <tile id="38" type="hole">
+   <properties>
+    <property name="symbol" value="pirate"/>
+   </properties>
+  </tile>
+  <tile id="39" type="hole">
+   <properties>
+    <property name="symbol" value="wales"/>
+   </properties>
+  </tile>
+  <tile id="40" type="hole">
+   <properties>
+    <property name="symbol" value="ireland"/>
+   </properties>
+  </tile>
+  <tile id="41" type="magic-hole"/>
+  <tile id="42" type="stone">
+   <properties>
+    <property name="symbol" value="teacup"/>
+   </properties>
+  </tile>
+  <tile id="43" type="stone">
+   <properties>
+    <property name="symbol" value="switzerland"/>
+   </properties>
+  </tile>
+  <tile id="44" type="stone">
+   <properties>
+    <property name="symbol" value="pirate"/>
+   </properties>
+  </tile>
+  <tile id="45" type="stone">
+   <properties>
+    <property name="symbol" value="wales"/>
+   </properties>
+  </tile>
+  <tile id="46" type="stone">
+   <properties>
+    <property name="symbol" value="ireland"/>
+   </properties>
+  </tile>
+  <tile id="47" type="magic-block"/>
+  <tile id="48" type="wall"/>
+  <tile id="49" type="wall"/>
+  <tile id="50" type="wall"/>
+  <tile id="51" type="wall"/>
+  <tile id="52" type="door"/>
+  <tile id="53" type="wall"/>
+  <tile id="54" type="wall"/>
+  <tile id="55" type="door"/>
+  <tile id="56" type="wall"/>
+  <tile id="57" type="wall"/>
+  <tile id="58" type="wall"/>
+  <tile id="59" type="wall"/>
+  <tile id="62" type="wall"/>
+  <tile id="63" type="wall"/>
+  <tile id="64" type="wall"/>
+  <tile id="65" type="wall"/>
+  <tile id="68" type="wall"/>
+  <tile id="69" type="door"/>
+  <tile id="70" type="door"/>
+  <tile id="71" type="wall"/>
+  <tile id="74" type="wall"/>
+  <tile id="75" type="wall"/>
+  <tile id="76" type="wall"/>
+  <tile id="77" type="wall"/>
+ </tileset>
+ <tileset firstgid="79" source="../tmx/tiles.tsx"/>
+ <tileset firstgid="157" source="../tmx/placeholders.tsx"/>
+ <layer id="1" name="Tile Layer 1" width="15" height="15">
   <data encoding="csv">
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24,
-24,24,24,24,24,24,24,24,24,24
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,
+15,15,15,15,15,15,15,15,15,15,15,15,15,15,15
 </data>
  </layer>
- <layer id="1" name="Tile Layer 1" width="10" height="10" visible="0">
+ <layer id="2" name="Tile Layer 2" width="15" height="15">
   <data encoding="csv">
-10,11,11,11,1,11,11,11,11,14,
-28,40,0,0,0,0,0,0,40,20,
-28,0,0,0,0,0,0,0,0,20,
-28,0,0,0,0,3,0,0,0,20,
-28,0,0,0,0,0,0,0,0,20,
-28,0,0,0,0,0,0,0,0,1,
-28,0,0,0,0,0,0,0,0,20,
-28,0,0,0,0,0,0,0,0,20,
-28,40,0,0,2,0,0,0,40,20,
-34,37,37,37,1,37,37,37,37,38
+1,2,2,2,2,2,127,128,129,2,2,2,2,2,83,
+97,86,99,99,99,99,133,134,135,99,99,99,99,88,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,158,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,143,144,
+97,92,0,109,109,109,109,109,109,109,109,0,0,149,150,
+97,92,0,0,0,0,0,0,0,0,0,0,0,155,156,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,92,0,0,0,0,0,0,0,0,0,0,0,94,89,
+97,98,99,99,99,99,130,131,132,99,99,99,99,100,89,
+103,106,106,106,106,106,136,137,138,106,106,106,106,106,107
 </data>
  </layer>
 </map>
