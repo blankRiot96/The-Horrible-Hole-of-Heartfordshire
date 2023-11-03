@@ -1,4 +1,4 @@
-import random
+import itertools
 
 import pygame
 
@@ -58,6 +58,158 @@ class Entity(GameObject):
         self.transfer_cell()
 
 
+class MagicHole(Entity):
+    FRAMES = get_frames(shared.ART_PATH / "magic-blocks.png", (64, 64))
+    BLOCK_IMAGES = {char: image for char, image in zip("OPEN", FRAMES[4:])}
+
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.HOLE, image.copy())
+
+        self.character = properties["character"]
+        self.filled = False
+
+
+class MagicBlock(Entity):
+    def __init__(
+        self,
+        cell: tuple[int, int],
+        image: pygame.Surface,
+        properties: dict,
+    ) -> None:
+        self.properties = properties
+        super().__init__(cell, MovementType.PUSHED, image.copy())
+        self.char_cycle = itertools.cycle("OPEN")
+        self.character = self.properties["character"]
+        char = next(self.char_cycle)
+        while char != self.character:
+            char = next(self.char_cycle)
+        self.falling = False
+        self.anims = None
+
+    def check_placed(self):
+        for entity in shared.entities:
+            if (
+                entity.cell == self.cell
+                and isinstance(entity, MagicHole)
+                and entity.character == self.character
+            ):
+                return True
+
+        return False
+
+    def transfer_cell(self) -> None:
+        if not self.moving:
+            return
+        if self.pos == self.desired_pos:
+            self.cell = self.desired_cell.copy()
+            self.moving = False
+
+            if self.check_placed():
+                return
+            self.character = next(self.char_cycle)
+            self.image = MagicHole.BLOCK_IMAGES[self.character].copy()
+        else:
+            self.moving = True
+
+    def scan_surroundings(self) -> None:
+        if self.falling:
+            self.direction = (0, 0)
+            return
+
+        for entity in shared.entities:
+            if entity.cell == self.desired_cell:
+                if isinstance(entity, MagicHole) and self.character != entity.character:
+                    self.direction = (0, 0)
+                    return
+
+            if entity.cell == self.cell:
+                if isinstance(entity, MagicHole) and self.character == entity.character:
+                    shared.check_solve = True
+                    self.falling = True
+                else:
+                    continue
+
+            if (
+                entity.cell == self.desired_cell
+                and entity.movement_type == MovementType.PUSHED
+            ):
+                if entity.request_direction(self.direction):
+                    entity.direction = self.direction
+                else:
+                    self.direction = (0, 0)
+
+            if (
+                entity.cell == self.desired_cell
+                and entity.movement_type == MovementType.STATIC
+            ):
+                self.direction = (0, 0)
+                return
+
+    def request_direction(self, new_direction) -> bool:
+        desired_cell = self.cell + new_direction
+
+        for entity in shared.entities:
+            if entity.cell == desired_cell:
+                if isinstance(entity, MagicHole) and self.character != entity.character:
+                    return False
+                elif entity.movement_type == MovementType.STATIC:
+                    return False
+                elif entity.movement_type == MovementType.PUSHED:
+                    return entity.request_direction(new_direction)
+
+        return True
+
+    def update(self) -> None:
+        super().update()
+        self.scan_surroundings()
+        if self.falling:
+            try:
+                self.animate_fall()
+            except StopIteration:
+                self.falling = False
+                self.movement_type = MovementType.STATIC
+
+                for entity in shared.entities:
+                    if (
+                        entity.rect.colliderect(self.rect)
+                        and entity.movement_type == MovementType.HOLE
+                    ):
+                        entity.movement_type = MovementType.WALKABLE
+                        entity.filled = True
+                shared.check_solve = True
+
+    def set_falling(self, toggle: bool) -> None:
+        self.falling = toggle
+
+    def animate_fall(self) -> None:
+        if self.anims is None:
+            cd = 0.2
+            frames: list[pygame.Surface] = [self.image.copy()]
+
+            fall_distance = 0
+            while fall_distance < self.image.get_height() // 4:
+                fall_distance += 1
+                self.image.scroll(0, 1)
+                pygame.draw.rect(
+                    self.image,
+                    (0, 0, 0, 0),
+                    pygame.Rect(0, 0, self.image.get_width(), fall_distance),
+                )
+                frames.append(self.image.copy())
+
+            self.anims = Animation(frames, cd, False)
+            self.image.scroll(0, -self.image.get_height() // 4)
+
+        self.anims.update()
+        self.image = self.anims.current_frame
+
+
 class Torch(Entity):
     FRAMES = get_frames(shared.ART_PATH / "torch.png", (64, 64))
 
@@ -90,6 +242,8 @@ class Torch(Entity):
 
                 if relative_rect.collidepoint(shared.mouse_pos):
                     self.clicked = True
+                    if self.near:
+                        shared.check_solve = True
 
     def check_near(self):
         self.near = self.get_cell_diff(shared.player.cell) >= (0, 0)
@@ -150,6 +304,10 @@ class Door(Entity):
             self.door_direction = DoorDirection.SOUTH
             self.room_delta = 3
         self.next_door = Door.DOOR_CONNECTION.get(self.door_direction)
+        if shared.room_id == 1:
+            self.locked = True
+        else:
+            self.locked = self.door_direction != shared.next_door
 
 
 class Wall(Entity):
@@ -255,6 +413,7 @@ class Player(Entity):
         self.last_direction = self.direction
 
     def travel_to_next_room(self, entity: Entity):
+        shared.entities_in_room[shared.room_id] = shared.entities.copy()
         shared.room_id += entity.room_delta
         shared.next_door = entity.next_door
         GameStateManager().set_state("PlayState")
@@ -266,7 +425,6 @@ class Player(Entity):
             if (
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.PUSHED
-                and isinstance(entity, Stone)
             ):
                 if entity.request_direction(self.direction):
                     entity.direction = self.direction
@@ -277,9 +435,8 @@ class Player(Entity):
                 entity.cell == self.desired_cell
                 and entity.movement_type == MovementType.STATIC
             ):
-                if isinstance(entity, Door):
+                if isinstance(entity, Door) and not entity.locked:
                     self.travel_to_next_room(entity)
-
                 self.direction = (0, 0)
             if (
                 entity.cell == self.desired_cell
@@ -326,7 +483,7 @@ class Stone(Entity):
         properties: dict,
     ) -> None:
         self.properties = properties
-        super().__init__(cell, MovementType.PUSHED, image)
+        super().__init__(cell, MovementType.PUSHED, image.copy())
         self.falling = False
         self.anims = None
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
@@ -338,12 +495,19 @@ class Stone(Entity):
 
         for entity in shared.entities:
             if entity.cell == self.desired_cell:
-                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol != entity.symbol
+                ):
                     self.direction = (0, 0)
                     return
 
             if entity.cell == self.cell:
-                if isinstance(entity, Hole) and self.symbol == entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol == entity.symbol
+                ):
+                    shared.check_solve = True
                     self.falling = True
                 else:
                     continue
@@ -369,7 +533,10 @@ class Stone(Entity):
 
         for entity in shared.entities:
             if entity.cell == desired_cell:
-                if isinstance(entity, Hole) and self.symbol != entity.symbol:
+                if (
+                    entity.movement_type == MovementType.HOLE
+                    and self.symbol != entity.symbol
+                ):
                     return False
                 elif entity.movement_type == MovementType.STATIC:
                     return False
@@ -386,7 +553,15 @@ class Stone(Entity):
                 self.animate_fall()
             except StopIteration:
                 self.falling = False
-                self.movement_type = MovementType.STATIC
+                self.movement_type = MovementType.WALKABLE
+                for entity in shared.entities:
+                    if (
+                        entity.rect.colliderect(self.rect)
+                        and entity.movement_type == MovementType.HOLE
+                    ):
+                        entity.movement_type = MovementType.WALKABLE
+                        entity.filled = True
+                shared.check_solve = True
 
     def set_falling(self, toggle: bool) -> None:
         self.falling = toggle
@@ -424,3 +599,4 @@ class Hole(Entity):
         self.properties = properties
         super().__init__(cell, MovementType.HOLE, image)
         self.symbol = Stone.SYMBOL_MAP.get(self.properties["symbol"])
+        self.filled = False

@@ -1,7 +1,19 @@
 import pygame
 
 from . import shared
-from .entities import Door, Entity, Foreground, Hole, Pillar, Player, Stone, Torch, Wall
+from .entities import (
+    Door,
+    Entity,
+    Foreground,
+    Hole,
+    MagicBlock,
+    MagicHole,
+    Pillar,
+    Player,
+    Stone,
+    Torch,
+    Wall,
+)
 from .enums import MovementType
 from .gameobject import get_relative_pos
 
@@ -18,10 +30,12 @@ class Grid:
         "pillar": Pillar,
         "foreground": Foreground,
         "hole": Hole,
+        "magic-block": MagicBlock,
+        "magic-hole": MagicHole,
     }
+    LOADED_BACKGROUNDS: dict[int, pygame.Surface] = {}
 
     def __init__(self) -> None:
-        shared.entities = []
         self.background = pygame.Surface(
             (
                 shared.TILE_SIDE * shared.room_map.width,
@@ -29,6 +43,21 @@ class Grid:
             ),
             pygame.SRCALPHA,
         )
+        self.load_entities()
+
+    def load_entities(self):
+        saved_entities = shared.entities_in_room.get(shared.room_id)
+        if saved_entities is None:
+            shared.entities = []
+            self.load_entities_from_room()
+        else:
+            shared.entities = saved_entities
+            self.background = Grid.LOADED_BACKGROUNDS[shared.room_id]
+            for i, entity in enumerate(shared.entities):
+                if isinstance(entity, Player):
+                    shared.entities[i] = shared.player
+                    break
+        self.align_player_pos()
 
     def add_entity(self, entity: Entity) -> None:
         shared.entities.append(entity)
@@ -70,7 +99,7 @@ class Grid:
                     y, x, entity_id=entity_id, image=image, properties=properties
                 )
 
-        self.align_player_pos()
+        Grid.LOADED_BACKGROUNDS[shared.room_id] = self.background.copy()
 
     def align_player_pos(self) -> None:
         for entity in shared.entities:
@@ -108,7 +137,13 @@ class Grid:
                 background_entities.append(entity)
 
             # this just forces holes to be the first things drawn
-            background_entities.sort(key=lambda e: int(not isinstance(e, Hole)))
+            background_entities.sort(
+                key=lambda e: (
+                    int(not isinstance(e, Hole)),
+                    int(e.movement_type != MovementType.WALKABLE),
+                )
+            )
+            background_entities.sort(key=lambda e: int(not isinstance(e, MagicHole)))
 
         return background_entities, foreground_entities
 

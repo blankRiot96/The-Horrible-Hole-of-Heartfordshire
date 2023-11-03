@@ -16,6 +16,8 @@ class MovementType(Enum):
     HOLE = auto()
     # PATHING -> can pathfind
     PATHING = auto()
+    # WALKABLE -> things that can be moved over and don't fit the other categories
+    WALKABLE = auto()
 
 
 class DoorDirection(Enum):

@@ -3,6 +3,7 @@ import asyncio
 import pygame
 
 from . import shared
+from .enums import DoorDirection
 from .gamestate import GameStateManager
 
 
@@ -13,6 +14,7 @@ class Core:
         shared.dt = 0.0
         shared.events = []
 
+        from .deathscreen import DeathScreen
         from .introstate import IntroState
         from .mainmenu import MainMenu
         from .playstate import PlayState
@@ -20,7 +22,21 @@ class Core:
         GameStateManager().add_state(PlayState)
         GameStateManager().add_state(IntroState)
         GameStateManager().add_state(MainMenu)
+        GameStateManager().add_state(DeathScreen)
+
         GameStateManager().set_state("IntroState")
+
+    def reset(self) -> None:
+        shared.room_id = 1
+        shared.entities_in_room = {}
+        shared.next_door = DoorDirection.SOUTH
+        if hasattr(shared, "overlay"):
+            del shared.overlay
+            del shared.entities
+            del shared.player
+        GameStateManager().reset()
+        self.__init__()
+        GameStateManager().set_state("PlayState")
 
     def win_init(self) -> None:
         pygame.init()
@@ -29,12 +45,18 @@ class Core:
         pygame.display.set_caption(shared.game_name)
 
     def update(self) -> None:
+        if shared.reset:
+            self.reset()
+            shared.reset = False
+
         shared.events = pygame.event.get()
         for event in shared.events:
             if event.type == pygame.QUIT:
                 raise SystemExit
 
         GameStateManager().handle_events()
+        if shared.reset:
+            return
 
         shared.dt = shared.clock.tick() / 1000
         shared.dt = min(shared.dt, 0.1)
@@ -43,6 +65,7 @@ class Core:
         shared.mouse_pos = pygame.mouse.get_pos()
 
         GameStateManager().update()
+        pygame.display.set_caption(str(shared.clock.get_fps()))
 
     def draw(self) -> None:
         shared.screen.fill("black")
