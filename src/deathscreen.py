@@ -11,6 +11,9 @@ from .gamestate import GameState, GameStateManager
 def set_reset_flag():
     shared.reset = True
 
+def quit() -> None:
+    raise SystemExit
+
 
 class DeathScreen(GameState):
     death_audio: pygame.mixer.Sound | None = None
