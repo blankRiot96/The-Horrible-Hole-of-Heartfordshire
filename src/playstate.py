@@ -64,14 +64,14 @@ class PlayState(GameState):
         self.stop_monster_audio_if_not_chasing()
         self.grid.update()
         self.handle_camera()
-        self.monster_manager.update()
+        # self.monster_manager.update()
         self.puzzle_manager.update()
         self.comb_lock.update()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
         self.grid.draw()
-        self.monster_manager.draw()
+        # self.monster_manager.draw()
         self.puzzle_manager.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
         self.comb_lock.draw()
