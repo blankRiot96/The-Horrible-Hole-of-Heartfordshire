@@ -10,6 +10,7 @@ from .gamestate import GameState, GameStateManager
 from .grid import Grid
 from .monster_manager import MonsterManager
 from .puzzle_manager import PuzzleManager
+from .button import Button
 
 
 def load_room():
@@ -37,6 +38,17 @@ class PlayState(GameState):
             )
         if not shared.game_audio.get_num_channels():
             shared.game_audio.play(-1, 0, 10_000)
+
+        # TODO: Add teleport and solve buttons for easy debugging
+        # self.buttons = [Button(pos=(100, 100),
+        #                        callback=self.on_teleport,
+        #                        font=),]
+
+    def on_solve(self):
+        ...
+
+    def on_teleport(self):
+        ...
 
     def handle_events(self) -> None:
         for event in shared.events:

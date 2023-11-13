@@ -32,8 +32,24 @@ class Button:
         self.rect = rect.copy()
         self.rect.center = self.pos
 
+        self.hovering = False
+        self.clicked = False
+
     def click(self) -> None:
         self._callback()
+
+    def on_click(self):
+        self.clicked = False
+        for event in shared.events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.clicked = True
+
+    def update(self):
+        self.hovering = self.rect.collidepoint(shared.mouse_pos)
+        self.on_click()
+
+        if self.clicked and self.hovering:
+            self.click()
 
     def draw(self) -> None:
         shared.screen.blit(self.surf, self.rect)

@@ -69,15 +69,11 @@ class MainMenu(GameState):
         )
 
     def handle_events(self) -> None:
-        for event in shared.events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    for button in self.buttons:
-                        if button.rect.collidepoint(shared.mouse_pos):
-                            button.click()
+        ...
 
     def update(self) -> None:
-        ...
+        for button in self.buttons:
+            button.update()
 
     def draw(self) -> None:
         shared.screen.blit(self.bg, (0, 0))

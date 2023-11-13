@@ -449,6 +449,8 @@ class Player(Entity):
     def travel_to_next_room(self, entity: Door):
         shared.entities_in_room[shared.room_id] = shared.entities.copy()
         shared.room_id += entity.room_delta
+        if shared.room_id == 8:
+            print("Debugg")
         shared.next_door = entity.next_door
         self.check_for_win(entity)
 
