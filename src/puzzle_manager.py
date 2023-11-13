@@ -11,11 +11,17 @@ class Lock:
     LOCK_IMAGE = pygame.image.load(get_path("assets/art/lock.png")).convert_alpha()
     LOCK_IMAGE = pygame.transform.scale(LOCK_IMAGE, (32, 32))
 
+    GOLDEN_IMAGE = pygame.image.load(
+        get_path("assets/art/golden-lock.png")
+    ).convert_alpha()
+    GOLDEN_IMAGE = pygame.transform.scale(GOLDEN_IMAGE, (32, 32))
+
     def __init__(
         self, center_pos: pygame.Vector2, door_direction: DoorDirection
     ) -> None:
         self.pos: pygame.Vector2 = center_pos.copy()
         self.door_direction = door_direction
+        self.golden = shared.room_id == 8 and self.door_direction == DoorDirection.SOUTH
         self.set_image_to_door()
         self.rect = self.image.get_rect(center=self.pos)
 
@@ -26,7 +32,11 @@ class Lock:
             self.image = pygame.transform.rotate(self.image, -90)
 
     def set_image_to_door(self):
-        self.image = Lock.LOCK_IMAGE.copy()
+        if self.golden:
+            self.image = Lock.GOLDEN_IMAGE.copy()
+        else:
+            self.image = Lock.LOCK_IMAGE.copy()
+
         x, y = self.door_direction.value
         self.image = pygame.transform.flip(self.image, False, y < 0)
         self.flip_image_right(x)
@@ -64,6 +74,7 @@ class PuzzleManager:
         if shared.room_id in shared.MAZE_ROOMS:
             self.on_solve()
         self.place_locks()
+        shared.win = all(PuzzleManager.SOLVED_ROOMS.values())
 
     def place_locks(self):
         self.locks: list[Lock] = []
@@ -74,10 +85,19 @@ class PuzzleManager:
                 lock = Lock(pygame.Vector2(entity.rect.center), entity.door_direction)
                 self.locks.append(lock)
 
+    def on_win(self, entity: Door):
+        if (
+            shared.room_id == 8
+            and entity.door_direction == DoorDirection.SOUTH
+            and not shared.win
+        ):
+            entity.locked = True
+
     def on_solve(self):
         for entity in shared.entities:
             if isinstance(entity, Door):
                 entity.locked = False
+                self.on_win(entity)
 
     def check_combo_room_solved(self):
         torches = []
@@ -89,10 +109,6 @@ class PuzzleManager:
             if isinstance(entity, Hole) and not entity.filled:
                 PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
                 return
-
-        if not all(torch.lit for torch in torches):
-            PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
-            return
 
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
         self.on_solve()
@@ -112,9 +128,6 @@ class PuzzleManager:
                 PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
                 return
 
-        if not all(PuzzleManager.SOLVED_ROOMS.values()):
-            PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
-            return
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
         self.on_solve()
 
@@ -174,8 +187,13 @@ class PuzzleManager:
         shared.check_solve = False
 
     def draw(self):
-        if PuzzleManager.SOLVED_ROOMS[shared.room_id]:
+        if PuzzleManager.SOLVED_ROOMS[shared.room_id] and shared.room_id != 8:
             return
 
         for lock in self.locks:
+            if shared.room_id == 8 and shared.win and not lock.golden:
+                continue
+
+            if shared.win:
+                continue
             lock.draw()

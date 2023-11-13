@@ -4,13 +4,15 @@ import pytmx
 
 from . import shared
 from .asset_loader import Loader
+from .button import Button
 from .combination_lock import CombinationLock
 from .common import get_path
+from .entities import Hole, Stone, Torch
+from .enums import DoorDirection
 from .gamestate import GameState, GameStateManager
 from .grid import Grid
 from .monster_manager import MonsterManager
 from .puzzle_manager import PuzzleManager
-from .button import Button
 
 
 def load_room():
@@ -21,8 +23,16 @@ def load_room():
 
 
 class PlayState(GameState):
+    DEBUG_ROOM = 8
+
     def __init__(self) -> None:
         super().__init__("PlayState")
+
+        self.game_init()
+        self.audio_init()
+        self.debug_init()
+
+    def game_init(self):
         load_room()
         self.monster_manager = MonsterManager()
         self.grid = Grid()
@@ -32,23 +42,66 @@ class PlayState(GameState):
         self.puzzle_manager = PuzzleManager()
         self.comb_lock = CombinationLock()
         shared.update_graph = True
+
+    def audio_init(self):
         if shared.game_audio is None:
             shared.game_audio = Loader().get_sound(
                 get_path("assets/audio/hhhdungeon.ogg")
             )
         if not shared.game_audio.get_num_channels():
-            shared.game_audio.play(-1, 0, 10_000)
+            shared.game_audio.play(-1, 0, 1_000)
 
-        # TODO: Add teleport and solve buttons for easy debugging
-        # self.buttons = [Button(pos=(100, 100),
-        #                        callback=self.on_teleport,
-        #                        font=),]
+    def debug_init(self):
+        self.debug_font = Loader().get_font("assets/font/DotGothic16-Regular.ttf", 32)
+
+        self.buttons = [
+            Button(
+                pygame.Vector2(100, 30),
+                self.on_solve,
+                self.debug_font,
+                "Solve",
+                text_color="white",
+                background_color="green",
+                border_color="white",
+            ),
+            Button(
+                pygame.Vector2(120, 90),
+                self.on_teleport,
+                self.debug_font,
+                f"Teleport to {PlayState.DEBUG_ROOM}",
+                text_color="white",
+                background_color="red",
+                border_color="white",
+            ),
+        ]
+
+    def solve_stone(self, stone: Stone):
+        for entity in shared.entities:
+            if isinstance(entity, Hole) and entity.symbol == stone.symbol:
+                stone.desired_cell = entity.cell
+                stone.speed = 600.0
 
     def on_solve(self):
-        ...
+        if shared.room_id in shared.MAZE_ROOMS:
+            return
+
+        if shared.room_id in shared.COMB_LOCK_ROOMS and shared.room_id not in (4, 9):
+            for entity in shared.entities:
+                if isinstance(entity, Torch):
+                    entity.lit = True
+
+        for entity in shared.entities:
+            if isinstance(entity, Stone):
+                self.solve_stone(entity)
+
+        shared.check_solve = True
 
     def on_teleport(self):
-        ...
+        shared.entities_in_room[shared.room_id] = shared.entities.copy()
+        shared.room_id = PlayState.DEBUG_ROOM
+
+        shared.next_door = DoorDirection.NORTH
+        GameStateManager().set_state("PlayState")
 
     def handle_events(self) -> None:
         for event in shared.events:
@@ -72,13 +125,22 @@ class PlayState(GameState):
         ):
             shared.monster_audio.stop()
 
+    def update_buttons(self):
+        for button in self.buttons:
+            button.update()
+
     def update(self) -> None:
+        self.update_buttons()
         self.stop_monster_audio_if_not_chasing()
         self.grid.update()
         self.handle_camera()
         # self.monster_manager.update()
         self.puzzle_manager.update()
         self.comb_lock.update()
+
+    def draw_buttons(self):
+        for button in self.buttons:
+            button.draw()
 
     def draw(self) -> None:
         shared.overlay.fill("black")
@@ -87,3 +149,4 @@ class PlayState(GameState):
         self.puzzle_manager.draw()
         shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
         self.comb_lock.draw()
+        self.draw_buttons()

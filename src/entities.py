@@ -14,6 +14,7 @@ from .gamestate import GameStateManager
 
 class Entity(GameObject):
     def __init__(self, cell, movement_type, image) -> None:
+        self.speed = shared.ENTITY_SPEED
         self.cell = pygame.Vector2(cell)
         self.movement_type = movement_type
 
@@ -60,7 +61,7 @@ class Entity(GameObject):
     def move(self) -> None:
         if self.desired_pos != self.pos:
             shared.update_graph = True
-        self.pos.move_towards_ip(self.desired_pos, shared.ENTITY_SPEED * shared.dt)
+        self.pos.move_towards_ip(self.desired_pos, self.speed * shared.dt)
         self.rect.topleft = self.pos
 
     def transfer_cell(self) -> None:
@@ -269,6 +270,8 @@ class Torch(Entity):
         self.near = self.get_cell_diff(shared.player.cell) >= (0, 0)
 
     def check_lit(self):
+        if self.lit:
+            return
         self.lit = self.near and self.clicked
 
     def on_lit(self):
@@ -448,9 +451,10 @@ class Player(Entity):
 
     def travel_to_next_room(self, entity: Door):
         shared.entities_in_room[shared.room_id] = shared.entities.copy()
+        if shared.room_id == 9:
+            ...
         shared.room_id += entity.room_delta
-        if shared.room_id == 8:
-            print("Debugg")
+
         shared.next_door = entity.next_door
         self.check_for_win(entity)
 
@@ -478,8 +482,6 @@ class Player(Entity):
             ):
                 if isinstance(entity, Door) and not entity.locked:
                     self.travel_to_next_room(entity)
-                    if shared.win:
-                        return
                 self.direction = (0, 0)
             if (
                 entity.cell == self.desired_cell
@@ -500,8 +502,6 @@ class Player(Entity):
         self.img_rect.center = self.rect.center
         self.bloom.update(self.img_rect.center)
         self.scan_surroundings()
-        if shared.win:
-            return
         self.update_anim()
 
     def draw(self) -> None:
