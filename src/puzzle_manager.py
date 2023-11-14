@@ -110,6 +110,10 @@ class PuzzleManager:
                 PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
                 return
 
+        if not all(torch.lit for torch in torches):
+            PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
+            return
+
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = True
         self.on_solve()
 

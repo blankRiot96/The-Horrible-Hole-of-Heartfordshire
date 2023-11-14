@@ -67,6 +67,10 @@ class Core:
         shared.keys = pygame.key.get_pressed()
         shared.mouse_pos = pygame.mouse.get_pos()
 
+        if not shared.IS_WASM:
+            pygame.display.set_caption(
+                f"{shared.game_name} | {shared.clock.get_fps():.0f}"
+            )
         GameStateManager().update()
 
     def draw(self) -> None:
