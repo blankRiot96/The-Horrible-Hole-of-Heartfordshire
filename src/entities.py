@@ -451,19 +451,13 @@ class Player(Entity):
 
     def travel_to_next_room(self, entity: Door):
         shared.entities_in_room[shared.room_id] = shared.entities.copy()
-        if shared.room_id == 9:
-            ...
         shared.room_id += entity.room_delta
 
         shared.next_door = entity.next_door
         self.check_for_win(entity)
 
     def scan_surroundings(self) -> None:
-        entities = (
-            self.get_surrounding_entities()
-            if shared.room_id in shared.MAZE_ROOMS
-            else shared.entities
-        )
+        entities = shared.entities
         for entity in entities:
             if entity.cell == self.cell:
                 continue
