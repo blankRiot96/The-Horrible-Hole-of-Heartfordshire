@@ -30,7 +30,7 @@ class PlayState(GameState):
 
         self.game_init()
         self.audio_init()
-        self.debug_init()
+        # self.debug_init()
         # self.debug_printing()
 
     def debug_printing(self):
@@ -140,7 +140,7 @@ class PlayState(GameState):
             button.update()
 
     def update(self) -> None:
-        self.update_buttons()
+        # self.update_buttons()
         self.stop_monster_audio_if_not_chasing()
         self.grid.update()
         self.handle_camera()
@@ -163,4 +163,4 @@ class PlayState(GameState):
             special_flags=pygame.BLEND_RGBA_MIN,
         )
         self.comb_lock.draw()
-        self.draw_buttons()
+        # self.draw_buttons()
