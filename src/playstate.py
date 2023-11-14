@@ -7,7 +7,7 @@ from .asset_loader import Loader
 from .button import Button
 from .combination_lock import CombinationLock
 from .common import get_path
-from .entities import Hole, Stone, Torch
+from .entities import Door, Hole, Stone, Torch
 from .enums import DoorDirection
 from .gamestate import GameState, GameStateManager
 from .grid import Grid
@@ -31,6 +31,16 @@ class PlayState(GameState):
         self.game_init()
         self.audio_init()
         self.debug_init()
+        # self.debug_printing()
+
+    def debug_printing(self):
+        print("-" * 10)
+        print(shared.room_id)
+        print()
+        for entity in shared.entities:
+            if isinstance(entity, Door):
+                print(entity.locked, entity.cell)
+        print("-" * 10)
 
     def game_init(self):
         load_room()
@@ -106,7 +116,7 @@ class PlayState(GameState):
     def handle_events(self) -> None:
         for event in shared.events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_r and not shared.monster.chasing:
                     GameStateManager().set_state("PlayState")
 
     def handle_camera(self) -> None:
@@ -147,6 +157,10 @@ class PlayState(GameState):
         self.grid.draw()
         self.monster_manager.draw()
         self.puzzle_manager.draw()
-        shared.screen.blit(shared.overlay, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+        shared.screen.blit(
+            shared.overlay.subsurface(shared.screen.get_rect()),
+            (0, 0),
+            special_flags=pygame.BLEND_RGBA_MIN,
+        )
         self.comb_lock.draw()
         self.draw_buttons()

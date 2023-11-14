@@ -185,7 +185,7 @@ class PuzzleManager:
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
 
     def update(self):
-        if not shared.check_solve:
+        if not shared.check_solve or PuzzleManager.SOLVED_ROOMS[shared.room_id]:
             return
         self.room_solve_checkers[shared.room_id]()
         shared.check_solve = False
@@ -195,7 +195,11 @@ class PuzzleManager:
             return
 
         for lock in self.locks:
-            if shared.room_id == 8 and shared.win and not lock.golden:
+            if (
+                shared.room_id == 8
+                and PuzzleManager.SOLVED_ROOMS[shared.room_id]
+                and not lock.golden
+            ):
                 continue
 
             if shared.win:

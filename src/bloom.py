@@ -8,6 +8,7 @@ from .gameobject import get_relative_pos
 
 class Bloom:
     IMAGE = pygame.image.load(get_path("assets/art/light.png")).convert_alpha()
+    OVERLOADED_ROOMS = (2, 5, 6)
 
     def __init__(
         self,
@@ -51,14 +52,18 @@ class Bloom:
             )
 
     def update(self, pos):
+        # if shared.IS_WASM and shared.room_id in (Bloom.OVERLOADED_ROOMS):
+        #     self.rect.center = pos
+        #     return
         self.wave.update(shared.dt)
         self.surf = scale_add(self.original_surf, self.wave.val * self.expansion_factor)
         self.rect = self.surf.get_rect()
         self.rect.center = pos
 
     def draw(self):
+        flags = pygame.BLEND_RGBA_MAX
+        # if shared.IS_WASM:
+        #     flags = 0
         shared.overlay.blit(
-            self.surf,
-            get_relative_pos(self.rect.topleft),
-            special_flags=pygame.BLEND_RGBA_MAX,
+            self.surf, get_relative_pos(self.rect.topleft), special_flags=flags
         )

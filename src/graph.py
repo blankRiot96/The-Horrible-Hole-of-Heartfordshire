@@ -78,31 +78,64 @@ class Graph:
                 if neighbor in walkable_cells:
                     self.add_connection(cell, neighbor)
 
+    # def search(self, source: Coordinate, dest: Coordinate) -> deque[Coordinate]:
+    #     output: deque[Coordinate] = deque()
+
+    #     explored: list[Coordinate] = [source]
+    #     parents: dict[Coordinate, Coordinate] = {}
+    #     nodes: deque[Coordinate] = deque()
+    #     nodes.append(source)
+
+    #     while len(nodes) > 0:
+    #         node = nodes.popleft()
+
+    #         if node == dest:
+    #             nodes.clear()
+
+    #         for neighbor in self.get_neighbors(node):
+    #             if neighbor not in explored:
+    #                 explored.append(neighbor)
+    #                 parents[neighbor] = node
+    #                 nodes.append(neighbor)
+
+    #     current_node = dest
+    #     while current_node != source:
+    #         output.appendleft(current_node)
+    #         try:
+    #             # TODO: Find source of issues
+    #             current_node = parents[current_node]
+    #         except IndexError:
+    #             continue
+    #     output.appendleft(source)
+
+    #     return output
+
     def search(self, source: Coordinate, dest: Coordinate) -> deque[Coordinate]:
         output: deque[Coordinate] = deque()
 
-        explored: list[Coordinate] = [source]
+        explored: set[Coordinate] = set()
         parents: dict[Coordinate, Coordinate] = {}
-        nodes: deque[Coordinate] = deque()
-        nodes.append(source)
+        nodes: deque[Coordinate] = deque([source])
 
-        while len(nodes) > 0:
+        while nodes:
             node = nodes.popleft()
 
             if node == dest:
-                nodes.clear()
+                break
 
             for neighbor in self.get_neighbors(node):
                 if neighbor not in explored:
-                    explored.append(neighbor)
+                    explored.add(neighbor)
                     parents[neighbor] = node
                     nodes.append(neighbor)
 
         current_node = dest
         while current_node != source:
             output.appendleft(current_node)
-            current_node = parents[current_node]
-
+            try:
+                current_node = parents[current_node]
+            except KeyError:
+                continue
         output.appendleft(source)
 
         return output

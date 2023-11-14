@@ -137,7 +137,7 @@ class MonsterManager:
         self.room = 9
         self.last_room = -1
         self.move_chance = 0.3
-        self.move_time = 15  # seconds
+        self.move_time = 5  # seconds
         self.timer = Time(self.move_time)
         self.create_monster()
 
