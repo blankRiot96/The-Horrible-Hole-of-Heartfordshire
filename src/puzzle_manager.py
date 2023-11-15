@@ -76,6 +76,9 @@ class PuzzleManager:
         self.place_locks()
         shared.win = all(PuzzleManager.SOLVED_ROOMS.values())
 
+        if shared.room_id == 8 and shared.win:
+            self.on_solve()
+
     def place_locks(self):
         self.locks: list[Lock] = []
         for entity in shared.entities:
@@ -185,7 +188,11 @@ class PuzzleManager:
         PuzzleManager.SOLVED_ROOMS[shared.room_id] = False
 
     def update(self):
-        if not shared.check_solve or PuzzleManager.SOLVED_ROOMS[shared.room_id]:
+        if (
+            shared.win
+            or not shared.check_solve
+            or PuzzleManager.SOLVED_ROOMS[shared.room_id]
+        ):
             return
         self.room_solve_checkers[shared.room_id]()
         shared.check_solve = False
